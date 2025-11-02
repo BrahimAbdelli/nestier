@@ -1,0 +1,12 @@
+{
+  "sonarlint.connectedMode.servers": [
+    {
+      "serverId": "nestier-local",
+      "serverUrl": "http://localhost:9000",
+      "token": "squ_1a29b6542178bf1c14a1a43a47fc3f527ffe6150"
+    }
+  ],
+  "sonarlint.connectedMode.project": {
+    "projectKey": "nestier"
+  }
+}

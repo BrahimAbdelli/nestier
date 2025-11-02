@@ -2,7 +2,7 @@ version: '3.9'
 services:
   backend:
     container_name: backend
-    image: nestjs-boilerplate:1.0.1
+    image: nestier:2.0.0
     build:
       context: .
       target: development
@@ -38,5 +38,30 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: nestier-sonarqube
+    networks:
+      - server-network
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_WEB_DISABLE_SONARCLOUD_INTEGRATION=true
+      - SONAR_FORCEAUTHENTICATION=false
+      - SONAR_AUTHENTICATOR_REALM=
+      - SONAR_AUTHENTICATOR_IGNORE_STARTUP_FAILURE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    restart: unless-stopped
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
 networks:
   server-network:

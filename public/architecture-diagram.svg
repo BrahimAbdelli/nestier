@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000">
+  <defs>
+    <style>
+      .module-box { fill: #f8f9fa; stroke: #495057; stroke-width: 2; stroke-dasharray: 5,5; }
+      .component-box { fill: #ffffff; stroke: #0066cc; stroke-width: 2; rx: 8; }
+      .base-component { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; rx: 8; }
+      .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #212529; }
+      .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #495057; }
+      .small-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #6c757d; }
+      .arrow { stroke: #495057; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .implements-arrow { stroke: #1976d2; stroke-width: 2; fill: none; stroke-dasharray: 5,5; marker-end: url(#arrowhead-blue); }
+      .extends-arrow { stroke: #28a745; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#495057" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#1976d2" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#28a745" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="30" text-anchor="middle" style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 24px; font-weight: 700; fill: #212529;">Nestier - Hexagonal Architecture with Generic Repository Pattern</text>
+
+  <!-- Legend -->
+  <g transform="translate(50, 50)">
+    <line x1="0" y1="0" x2="40" y2="0" class="extends-arrow" />
+    <text x="50" y="5" class="small-text">Extends/Inherits</text>
+    
+    <line x1="200" y1="0" x2="240" y2="0" class="implements-arrow" />
+    <text x="250" y="5" class="small-text">Implements</text>
+    
+    <line x1="400" y1="0" x2="440" y2="0" class="arrow" />
+    <text x="450" y="5" class="small-text">Uses/Depends on</text>
+  </g>
+
+  <!-- Base Module (Generic) -->
+  <rect x="550" y="100" width="300" height="380" class="module-box" />
+  <text x="700" y="125" text-anchor="middle" class="title-text">Base Module (Generic)</text>
+  
+  <!-- Base Controller -->
+  <rect x="590" y="145" width="220" height="60" class="base-component" />
+  <text x="700" y="170" text-anchor="middle" class="label-text">BaseController&lt;T&gt;</text>
+  <text x="700" y="190" text-anchor="middle" class="small-text">CRUD + Search + Pagination</text>
+
+  <!-- Base Service -->
+  <rect x="590" y="230" width="220" height="80" class="base-component" />
+  <text x="700" y="255" text-anchor="middle" class="label-text">BaseService&lt;T&gt;</text>
+  <text x="700" y="275" text-anchor="middle" class="small-text">create, update, findAll</text>
+  <text x="700" y="292" text-anchor="middle" class="small-text">findById, archive, delete</text>
+
+  <!-- Base Repository -->
+  <rect x="590" y="335" width="220" height="80" class="base-component" />
+  <text x="700" y="360" text-anchor="middle" class="label-text">BaseRepository&lt;T&gt;</text>
+  <text x="700" y="380" text-anchor="middle" class="small-text">Generic TypeORM operations</text>
+  <text x="700" y="397" text-anchor="middle" class="small-text">MongoDB + TypeORM</text>
+
+  <!-- Base Entity -->
+  <rect x="590" y="440" width="220" height="30" class="base-component" />
+  <text x="700" y="460" text-anchor="middle" class="label-text">BaseEntity</text>
+
+  <!-- Arrows within Base Module -->
+  <path d="M 700 205 L 700 230" class="arrow" />
+  <path d="M 700 310 L 700 335" class="arrow" />
+  <path d="M 700 415 L 700 440" class="arrow" />
+
+  <!-- Category Module -->
+  <rect x="50" y="520" width="300" height="420" class="module-box" />
+  <text x="200" y="545" text-anchor="middle" class="title-text">Category Module</text>
+  <text x="200" y="565" text-anchor="middle" class="small-text" style="fill: #28a745; font-weight: 600;">✓ Full Base Implementation</text>
+
+  <!-- Category Controller -->
+  <rect x="90" y="585" width="220" height="50" class="component-box" />
+  <text x="200" y="607" text-anchor="middle" class="label-text">CategoryController</text>
+  <text x="200" y="625" text-anchor="middle" class="small-text">Inherits all CRUD APIs</text>
+
+  <!-- Category Service -->
+  <rect x="90" y="660" width="220" height="70" class="component-box" />
+  <text x="200" y="682" text-anchor="middle" class="label-text">CategoryService</text>
+  <text x="200" y="700" text-anchor="middle" class="small-text">Overrides: create(), update()</text>
+  <text x="200" y="717" text-anchor="middle" class="small-text">+ Business validation</text>
+
+  <!-- Category Entity -->
+  <rect x="90" y="755" width="220" height="50" class="component-box" />
+  <text x="200" y="777" text-anchor="middle" class="label-text">CategoryEntity</text>
+  <text x="200" y="795" text-anchor="middle" class="small-text">name, quantity</text>
+
+  <!-- Category uses Base Repository -->
+  <rect x="90" y="830" width="220" height="40" class="component-box" />
+  <text x="200" y="855" text-anchor="middle" class="small-text">Uses: BaseRepository</text>
+
+  <!-- Arrows from Category to Base -->
+  <path d="M 310 610 L 590 175" class="extends-arrow" />
+  <path d="M 310 695 L 590 270" class="extends-arrow" />
+  <path d="M 310 780 L 590 455" class="extends-arrow" />
+  <path d="M 310 850 L 590 375" class="implements-arrow" />
+
+  <!-- Product Module -->
+  <rect x="550" y="520" width="300" height="420" class="module-box" />
+  <text x="700" y="545" text-anchor="middle" class="title-text">Product Module</text>
+  <text x="700" y="565" text-anchor="middle" class="small-text" style="fill: #0066cc; font-weight: 600;">⚡ Extended Base + Custom APIs</text>
+
+  <!-- Product Controller -->
+  <rect x="590" y="585" width="220" height="70" class="component-box" />
+  <text x="700" y="607" text-anchor="middle" class="label-text">ProductController</text>
+  <text x="700" y="625" text-anchor="middle" class="small-text">+ GET /expensive</text>
+  <text x="700" y="642" text-anchor="middle" class="small-text">+ GET /search/:name</text>
+
+  <!-- Product Service -->
+  <rect x="590" y="680" width="220" height="70" class="component-box" />
+  <text x="700" y="702" text-anchor="middle" class="label-text">ProductService</text>
+  <text x="700" y="720" text-anchor="middle" class="small-text">Overrides: create(), update()</text>
+  <text x="700" y="737" text-anchor="middle" class="small-text">+ Custom methods</text>
+
+  <!-- Product Repository -->
+  <rect x="590" y="775" width="220" height="60" class="component-box" />
+  <text x="700" y="797" text-anchor="middle" class="label-text">ProductRepository</text>
+  <text x="700" y="815" text-anchor="middle" class="small-text">+ findExpensiveProducts()</text>
+
+  <!-- Product Use Cases -->
+  <rect x="590" y="860" width="220" height="60" class="component-box" />
+  <text x="700" y="882" text-anchor="middle" class="label-text">Use Cases</text>
+  <text x="700" y="900" text-anchor="middle" class="small-text">FindExpensiveProducts</text>
+
+  <!-- Arrows from Product to Base -->
+  <path d="M 700 585 L 700 205" class="extends-arrow" />
+  <path d="M 700 680 L 700 310" class="extends-arrow" />
+  <path d="M 700 775 L 700 415" class="extends-arrow" />
+  <path d="M 700 750 L 700 860" class="arrow" />
+
+  <!-- User Module -->
+  <rect x="1050" y="520" width="300" height="420" class="module-box" />
+  <text x="1200" y="545" text-anchor="middle" class="title-text">User Module</text>
+  <text x="1200" y="565" text-anchor="middle" class="small-text" style="fill: #dc3545; font-weight: 600;">⚙ Custom Implementation</text>
+
+  <!-- User Controller -->
+  <rect x="1090" y="585" width="220" height="90" class="component-box" />
+  <text x="1200" y="607" text-anchor="middle" class="label-text">UserController</text>
+  <text x="1200" y="625" text-anchor="middle" class="small-text">Custom Auth APIs:</text>
+  <text x="1200" y="642" text-anchor="middle" class="small-text">signup, login, forgot-password</text>
+  <text x="1200" y="659" text-anchor="middle" class="small-text">reset-password, archive</text>
+
+  <!-- User Service -->
+  <rect x="1090" y="700" width="220" height="70" class="component-box" />
+  <text x="1200" y="722" text-anchor="middle" class="label-text">UserService</text>
+  <text x="1200" y="740" text-anchor="middle" class="small-text">Uses: BaseService logic</text>
+  <text x="1200" y="757" text-anchor="middle" class="small-text">+ Auth &amp; Email features</text>
+
+  <!-- User Repository -->
+  <rect x="1090" y="795" width="220" height="50" class="component-box" />
+  <text x="1200" y="817" text-anchor="middle" class="label-text">UserRepository</text>
+  <text x="1200" y="835" text-anchor="middle" class="small-text">Implements: BaseRepository</text>
+
+  <!-- User Entity -->
+  <rect x="1090" y="870" width="220" height="50" class="component-box" />
+  <text x="1200" y="892" text-anchor="middle" class="label-text">UserEntity</text>
+  <text x="1200" y="910" text-anchor="middle" class="small-text">email, password, roles, etc.</text>
+
+  <!-- Arrows from User to Base -->
+  <path d="M 1090 630 L 810 175" class="implements-arrow" />
+  <path d="M 1090 735 L 810 270" class="implements-arrow" />
+  <path d="M 1090 820 L 810 375" class="extends-arrow" />
+  <path d="M 1090 895 L 810 455" class="extends-arrow" />
+
+  <!-- Arrows within User Module -->
+  <path d="M 1200 675 L 1200 700" class="arrow" />
+  <path d="M 1200 770 L 1200 795" class="arrow" />
+  <path d="M 1200 845 L 1200 870" class="arrow" />
+
+  <!-- Shared Infrastructure -->
+  <rect x="50" y="100" width="400" height="150" style="fill: #fff3cd; stroke: #856404; stroke-width: 2; stroke-dasharray: 3,3; rx: 8;" />
+  <text x="250" y="125" text-anchor="middle" class="title-text" style="fill: #856404;">Shared Infrastructure</text>
+  
+  <rect x="70" y="140" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="125" y="162" text-anchor="middle" class="small-text">Logger Service</text>
+  
+  <rect x="195" y="140" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="250" y="162" text-anchor="middle" class="small-text">Email Service</text>
+  
+  <rect x="320" y="140" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="375" y="162" text-anchor="middle" class="small-text">Error Handling</text>
+
+  <rect x="70" y="190" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="125" y="212" text-anchor="middle" class="small-text">Validators</text>
+  
+  <rect x="195" y="190" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="250" y="212" text-anchor="middle" class="small-text">Pipes</text>
+  
+  <rect x="320" y="190" width="110" height="35" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="375" y="212" text-anchor="middle" class="small-text">Search Utils</text>
+
+  <!-- Database -->
+  <rect x="950" y="100" width="400" height="100" style="fill: #d4edda; stroke: #155724; stroke-width: 2; rx: 8;" />
+  <text x="1150" y="130" text-anchor="middle" class="title-text" style="fill: #155724;">Database Layer</text>
+  
+  <rect x="980" y="150" width="150" height="35" style="fill: #ffffff; stroke: #155724; stroke-width: 1.5; rx: 5;" />
+  <text x="1055" y="172" text-anchor="middle" class="small-text">MongoDB</text>
+  
+  <rect x="1150" y="150" width="150" height="35" style="fill: #ffffff; stroke: #155724; stroke-width: 1.5; rx: 5;" />
+  <text x="1225" y="172" text-anchor="middle" class="small-text">TypeORM</text>
+
+  <!-- Connection arrows to database -->
+  <path d="M 700 415 L 1055 200" class="arrow" style="stroke-dasharray: 3,3;" />
+</svg>
+
