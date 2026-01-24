@@ -24,7 +24,7 @@ export class AppInitializer {
     const options: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
       .setTitle('Nestier')
       .setDescription('This is a project aimed to be a nestjs boilerplate using hexagonal architecture and generic repository pattern')
-      .setVersion('2.0.0')
+      .setVersion('2.0.1')
       .build();
     const document: OpenAPIObject = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('/docs', app, document);

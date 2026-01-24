@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.1] - 2026-01-24
+
+### Changed
+- **Major Updates**: Migrated to NestJS v11.1.12 and MongoDB driver v7.0.0
+- Updated all NestJS packages to v11 (common, core, platform-express, swagger, testing)
+- Updated MongoDB driver from v6.21.0 to v7.0.0
+- Updated nodemailer to v7.0.12 (security fix for MEDIUM vulnerability)
+
+### Dependencies Updated
+- `@nestjs/common`: 10.3.8 → 11.1.12
+- `@nestjs/core`: 10.3.8 → 11.1.12
+- `@nestjs/platform-express`: 10.4.22 → 11.1.12
+- `@nestjs/swagger`: 7.4.2 → 11.2.5
+- `@nestjs/testing`: 10.3.8 → 11.1.12
+- `mongodb`: 6.21.0 → 7.0.0
+- `nodemailer`: 7.0.10 → 7.0.12 (security fix)
+
+### Verified
+- ✅ All unit tests passing (127/127)
+- ✅ All E2E tests passing
+- ✅ Build successful
+- ✅ No breaking changes detected
+
 ## [2.0.0] - 2025-01-24
 
 ### Added

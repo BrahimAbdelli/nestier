@@ -18,7 +18,7 @@ describe('LoggerService', () => {
             get: jest.fn((key: string) => {
               const config = {
                 'app.name': 'test-app',
-                'app.version': '2.0.0',
+                'app.version': '2.0.1',
                 'app.environment': 'test',
               };
               return config[key];
