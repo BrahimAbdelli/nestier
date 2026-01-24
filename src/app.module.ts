@@ -1,54 +1,67 @@
+import { classes } from '@automapper/classes';
+import { AutomapperModule } from '@automapper/nestjs';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { CacheModule, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
-import { devConfig } from './config/dev.config';
-import { prodConfig } from './config/prod.config';
+import { ErrorMapperService, GlobalExceptionFilter } from '@shared/common/error-handling';
+import { join } from 'node:path';
+import { BaseModule } from './modules/base/base.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ProductModule } from './modules/product/product.module';
-import { UsersModule } from './modules/users/users.module';
-import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
+import { UserModule } from './modules/user/user.module';
+import { EmailModule } from '@shared/common/email/infrastructure/modules/email.module';
+import { LoggerModule } from '@shared/common/logger/logger.module';
+import { configuration, getEnvFilePath, OrmDatabaseConfig } from '@shared/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [process.env.NODE_ENV == 'DEV' ? devConfig : prodConfig]
+      load: [configuration],
+      envFilePath: getEnvFilePath(),
     }),
-    CacheModule.register(),
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      host: process.env.DB_HOST,
-      database: process.env.DB_NAME,
-      entities: ['src/modules/*/**.entity{.ts,.js}'],
-      synchronize: false,
-      logger: 'advanced-console',
-      useUnifiedTopology: true,
-      autoLoadEntities: true
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule, LoggerModule],
+      useClass: OrmDatabaseConfig,
     }),
-    MailerModule.forRoot({
-      transport: {
-        secure: true, // use SSL
-        auth: {},
-        template: {
-          dir: join(__dirname, '..', 'templates'), // from src not dist folder (perhaps needs to change in Prod !!!!!!!)
-          /* adapter: new HandlebarsAdapter(), // or new PugAdapter */
-          options: {
-            strict: true
-          }
-        }
-      }
+
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          secure: true, // use SSL
+          auth: {},
+          template: {
+            dir: join(__dirname, '..', 'templates'), // from src not dist folder (perhaps needs to change in Prod !!!!!!!)
+            /* adapter: new HandlebarsAdapter(), // or new PugAdapter */
+            options: {
+              strict: true,
+            },
+          },
+        },
+      }),
     }),
-    UsersModule,
+    CacheModule.register({ isGlobal: true }),
+    BaseModule,
+    UserModule,
+    EmailModule,
     CategoryModule,
-    ProductModule
+    ProductModule,
+    AutomapperModule.forRoot({ strategyInitializer: classes() }),
   ],
   controllers: [],
-  providers: []
+  providers: [
+    ErrorMapperService,
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+  configure(): void {
+    // Middleware configuration
   }
 }

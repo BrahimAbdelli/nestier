@@ -1,0 +1,58 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  sonar-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for better analysis
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run ESLint
+      run: npm run lint:report
+
+    - name: Run tests with coverage
+      run: npm run test:cov
+
+    - name: Run E2E tests with coverage
+      run: npm run test:e2e
+
+    - name: Build project
+      run: npm run build
+
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        args: >
+          -Dsonar.projectKey=nestier
+          -Dsonar.projectName=Nestier
+          -Dsonar.projectVersion=2.0.0
+          -Dsonar.sources=src
+          -Dsonar.tests=src
+          -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*.e2e-spec.ts
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/coverage-e2e/**,**/*.spec.ts,**/*.test.ts,**/*.e2e-spec.ts,**/*.mock.ts,**/test/**,**/tests/**
+          -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info,coverage-e2e/lcov.info
+          -Dsonar.typescript.eslint.reportPaths=eslint-report.json
+          -Dsonar.qualitygate.wait=true
+

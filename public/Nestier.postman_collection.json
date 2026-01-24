@@ -1,0 +1,1125 @@
+{
+	"info": {
+		"_postman_id": "93d23ab8-f2b3-468d-90f1-9d341cd233d7",
+		"name": "Nestier",
+		"description": "A production-ready NestJS boilerplate with Hexagonal Architecture and Generic Repository Pattern",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10590055"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@maildrop.com\",\n    \"username\": \"testuser\",\n    \"password\": \"password123\",\n    \"lastname\": \"User\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"signup"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"auth_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@maildrop.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "Authenticate user and get JWT token"
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/forgot-password/test@maildrop.com",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"forgot-password",
+								"test@maildrop.com"
+							]
+						},
+						"description": "Request password reset email"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"your-reset-token-here\",\n    \"password\": \"newpassword123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"reset-password"
+							]
+						},
+						"description": "Reset password using token from email"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Get all active users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa5397a37e42df4e0f7db",
+									"description": "User ObjectId"
+								}
+							]
+						},
+						"description": "Find user by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Email",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/email/:email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"email",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": "test@maildrop.com",
+									"description": "User email address"
+								}
+							]
+						},
+						"description": "Find user by email"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/username/:username",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"username",
+								":username"
+							],
+							"variable": [
+								{
+									"key": "username",
+									"value": "testuser",
+									"description": "Username to search"
+								}
+							]
+						},
+						"description": "Find user by username"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@maildrop.com\",\n    \"username\": \"updateduser\",\n    \"password\": \"password123\",\n    \"lastname\": \"Updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/user/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa5397a37e42df4e0f7db",
+									"description": "User ObjectId"
+								}
+							]
+						},
+						"description": "Update user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Archive User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/archive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"archive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa5397a37e42df4e0f7db",
+									"description": "User ObjectId"
+								}
+							]
+						},
+						"description": "Archive (soft delete) a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Unarchive User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/unarchive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"unarchive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa5397a37e42df4e0f7db",
+									"description": "User ObjectId"
+								}
+							]
+						},
+						"description": "Unarchive a user"
+					},
+					"response": []
+				}
+			],
+			"description": "User authentication and management endpoints"
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Product 1\",\n    \"price\": 100,\n    \"description\": \"This is a description for product 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Create a new product"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Get all products"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/find/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"find",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa69967b7be0b18d28511",
+									"description": "Product ObjectId"
+								}
+							]
+						},
+						"description": "Find product by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Paginate Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/paginate?take=10&skip=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"paginate"
+							],
+							"query": [
+								{
+									"key": "take",
+									"value": "10",
+									"description": "Number of items per page"
+								},
+								{
+									"key": "skip",
+									"value": "0",
+									"description": "Number of items to skip"
+								}
+							]
+						},
+						"description": "Get paginated products"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributes\": [\n        {\n            \"key\": \"name\",\n            \"value\": \"Product\",\n            \"comparator\": \"LIKE\"\n        },\n        {\n            \"key\": \"isDeleted\",\n            \"value\": false,\n            \"comparator\": \"EQUALS\"\n        }\n    ],\n    \"orders\": {\n        \"name\": \"ASC\",\n        \"price\": \"DESC\"\n    },\n    \"type\": \"AND\",\n    \"take\": 10,\n    \"skip\": 0,\n    \"isPaginable\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/search",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"search"
+							]
+						},
+						"description": "Search products with advanced filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Expensive Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/expensive?threshold=1000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"expensive"
+							],
+							"query": [
+								{
+									"key": "threshold",
+									"value": "1000",
+									"description": "Price threshold (default: 1000)"
+								}
+							]
+						},
+						"description": "Get products above a price threshold"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products By Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/search/:name",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"search",
+								":name"
+							],
+							"variable": [
+								{
+									"key": "name",
+									"value": "Product",
+									"description": "Product name to search"
+								}
+							]
+						},
+						"description": "Search products by name"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Product 1\",\n    \"price\": 150,\n    \"description\": \"This is an updated description for product 1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa69967b7be0b18d28511",
+									"description": "Product ObjectId"
+								}
+							]
+						},
+						"description": "Update product information"
+					},
+					"response": []
+				},
+				{
+					"name": "Archive Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/archive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"archive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa69967b7be0b18d28511",
+									"description": "Product ObjectId"
+								}
+							]
+						},
+						"description": "Archive (soft delete) a product"
+					},
+					"response": []
+				},
+				{
+					"name": "Unarchive Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/unarchive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"unarchive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa69967b7be0b18d28511",
+									"description": "Product ObjectId"
+								}
+							]
+						},
+						"description": "Unarchive a product"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bfa69967b7be0b18d28511",
+									"description": "Product ObjectId"
+								}
+							]
+						},
+						"description": "Permanently delete a product"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Clear all products"
+					},
+					"response": []
+				}
+			],
+			"description": "Product CRUD and search endpoints (requires authentication)"
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Category 1\",\n    \"quantity\": 90\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						},
+						"description": "Create a new category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						},
+						"description": "Get all categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/find/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"find",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bf9a457a37e42df4e0f7da",
+									"description": "Category ObjectId"
+								}
+							]
+						},
+						"description": "Find category by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Paginate Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/paginate?take=10&skip=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"paginate"
+							],
+							"query": [
+								{
+									"key": "take",
+									"value": "10",
+									"description": "Number of items per page"
+								},
+								{
+									"key": "skip",
+									"value": "0",
+									"description": "Number of items to skip"
+								}
+							]
+						},
+						"description": "Get paginated categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Categories",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributes\": [\n        {\n            \"key\": \"isDeleted\",\n            \"value\": false,\n            \"comparator\": \"EQUALS\"\n        },\n        {\n            \"key\": \"name\",\n            \"value\": \"Category\",\n            \"comparator\": \"LIKE\"\n        }\n    ],\n    \"orders\": {\n        \"name\": \"ASC\",\n        \"quantity\": \"DESC\"\n    },\n    \"type\": \"AND\",\n    \"take\": 10,\n    \"skip\": 0,\n    \"isPaginable\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/categories/search",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"search"
+							]
+						},
+						"description": "Search categories with advanced filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Category 1\",\n    \"quantity\": 80\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/categories/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bf9a457a37e42df4e0f7da",
+									"description": "Category ObjectId"
+								}
+							]
+						},
+						"description": "Update category information"
+					},
+					"response": []
+				},
+				{
+					"name": "Archive Category",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/archive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"archive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bf9a457a37e42df4e0f7da",
+									"description": "Category ObjectId"
+								}
+							]
+						},
+						"description": "Archive (soft delete) a category"
+					},
+					"response": []
+				},
+				{
+					"name": "Unarchive Category",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/unarchive/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"unarchive",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bf9a457a37e42df4e0f7da",
+									"description": "Category ObjectId"
+								}
+							]
+						},
+						"description": "Unarchive a category"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64bf9a457a37e42df4e0f7da",
+									"description": "Category ObjectId"
+								}
+							]
+						},
+						"description": "Permanently delete a category"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Categories",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						},
+						"description": "Clear all categories"
+					},
+					"response": []
+				}
+			],
+			"description": "Category CRUD endpoints (no authentication required)"
+		}
+	]
+}

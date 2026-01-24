@@ -1,0 +1,313 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1100">
+  <defs>
+    <style>
+      .module-box { fill: #f8f9fa; stroke: #495057; stroke-width: 2; stroke-dasharray: 5,5; rx: 8; }
+      .component-box { fill: #ffffff; stroke: #0066cc; stroke-width: 2; rx: 8; }
+      .base-component { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; rx: 8; }
+      .layer-domain { fill: #fff3e0; stroke: #e65100; stroke-width: 2; rx: 6; }
+      .layer-application { fill: #e8f5e9; stroke: #2e7d32; stroke-width: 2; rx: 6; }
+      .layer-infrastructure { fill: #fce4ec; stroke: #c2185b; stroke-width: 2; rx: 6; }
+      .layer-presentation { fill: #e3f2fd; stroke: #1565c0; stroke-width: 2; rx: 6; }
+      .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #212529; }
+      .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; fill: #495057; }
+      .small-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #6c757d; }
+      .layer-label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; }
+      .arrow { stroke: #495057; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .implements-arrow { stroke: #1976d2; stroke-width: 2; fill: none; stroke-dasharray: 5,5; marker-end: url(#arrowhead-blue); }
+      .extends-arrow { stroke: #28a745; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); }
+      .uses-arrow { stroke: #6c757d; stroke-width: 1.5; fill: none; stroke-dasharray: 3,3; marker-end: url(#arrowhead-gray); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#495057" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#1976d2" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#28a745" />
+    </marker>
+    <marker id="arrowhead-gray" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 8 2.5, 0 5" fill="#6c757d" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="35" text-anchor="middle" style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 24px; font-weight: 700; fill: #212529;">Nestier - Hexagonal Architecture with Generic Repository Pattern</text>
+  <text x="700" y="58" text-anchor="middle" style="font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #6c757d;">Clean Architecture | Ports &amp; Adapters | Domain-Driven Design</text>
+
+  <!-- Legend -->
+  <g transform="translate(50, 75)">
+    <rect x="0" y="-8" width="1300" height="30" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="4" />
+    <line x1="20" y1="7" x2="60" y2="7" class="extends-arrow" />
+    <text x="70" y="12" class="small-text">Extends</text>
+    
+    <line x1="170" y1="7" x2="210" y2="7" class="implements-arrow" />
+    <text x="220" y="12" class="small-text">Implements Interface</text>
+    
+    <line x1="370" y1="7" x2="410" y2="7" class="arrow" />
+    <text x="420" y="12" class="small-text">Uses/Depends</text>
+
+    <rect x="560" y="0" width="14" height="14" class="layer-presentation" />
+    <text x="580" y="12" class="small-text">Presentation</text>
+
+    <rect x="680" y="0" width="14" height="14" class="layer-application" />
+    <text x="700" y="12" class="small-text">Application</text>
+
+    <rect x="800" y="0" width="14" height="14" class="layer-domain" />
+    <text x="820" y="12" class="small-text">Domain</text>
+
+    <rect x="900" y="0" width="14" height="14" class="layer-infrastructure" />
+    <text x="920" y="12" class="small-text">Infrastructure</text>
+  </g>
+
+  <!-- ========== BASE MODULE ========== -->
+  <rect x="480" y="120" width="440" height="380" class="module-box" />
+  <text x="700" y="145" text-anchor="middle" class="title-text">Base Module (Generic Components)</text>
+  <text x="700" y="163" text-anchor="middle" class="small-text" style="fill: #1976d2; font-weight: 600;">Reusable patterns for all modules</text>
+  
+  <!-- Base Controller (Presentation) -->
+  <rect x="510" y="180" width="180" height="65" class="layer-presentation" />
+  <text x="600" y="200" text-anchor="middle" class="label-text" style="fill: #1565c0;">BaseController&lt;T&gt;</text>
+  <text x="600" y="218" text-anchor="middle" class="small-text">GET, POST, PUT, DELETE</text>
+  <text x="600" y="233" text-anchor="middle" class="small-text">Search, Paginate, Archive</text>
+
+  <!-- Base Service (Application) -->
+  <rect x="710" y="180" width="180" height="65" class="layer-application" />
+  <text x="800" y="200" text-anchor="middle" class="label-text" style="fill: #2e7d32;">BaseService&lt;T&gt;</text>
+  <text x="800" y="218" text-anchor="middle" class="small-text">CRUD operations</text>
+  <text x="800" y="233" text-anchor="middle" class="small-text">Search &amp; Pagination logic</text>
+
+  <!-- Base Repository Interface (Domain/Port) -->
+  <rect x="510" y="265" width="180" height="55" class="layer-domain" />
+  <text x="600" y="285" text-anchor="middle" class="label-text" style="fill: #e65100;">BaseRepository&lt;T&gt;</text>
+  <text x="600" y="303" text-anchor="middle" class="small-text">Abstract interface (Port)</text>
+
+  <!-- TypeORM Repository (Infrastructure/Adapter) -->
+  <rect x="710" y="265" width="180" height="55" class="layer-infrastructure" />
+  <text x="800" y="285" text-anchor="middle" class="label-text" style="fill: #c2185b;">TypeOrmBaseRepository</text>
+  <text x="800" y="303" text-anchor="middle" class="small-text">Concrete adapter</text>
+
+  <!-- Base Entity -->
+  <rect x="510" y="340" width="180" height="50" class="layer-domain" />
+  <text x="600" y="360" text-anchor="middle" class="label-text" style="fill: #e65100;">BaseEntity</text>
+  <text x="600" y="378" text-anchor="middle" class="small-text">_id, timestamps, audit</text>
+
+  <!-- Base Value Object -->
+  <rect x="710" y="340" width="180" height="50" class="layer-domain" />
+  <text x="800" y="360" text-anchor="middle" class="label-text" style="fill: #e65100;">Base (Value Object)</text>
+  <text x="800" y="378" text-anchor="middle" class="small-text">Domain model</text>
+
+  <!-- DTO Mapper Interface -->
+  <rect x="510" y="410" width="180" height="50" class="layer-presentation" />
+  <text x="600" y="430" text-anchor="middle" class="label-text" style="fill: #1565c0;">BaseDtoMapperInterface</text>
+  <text x="600" y="448" text-anchor="middle" class="small-text">DTO ↔ Domain mapping</text>
+
+  <!-- Entity Mapper Interface -->
+  <rect x="710" y="410" width="180" height="50" class="layer-infrastructure" />
+  <text x="800" y="430" text-anchor="middle" class="label-text" style="fill: #c2185b;">BaseEntityMapperInterface</text>
+  <text x="800" y="448" text-anchor="middle" class="small-text">Entity ↔ Domain mapping</text>
+
+  <!-- Arrows within Base Module -->
+  <path d="M 690 212 L 710 212" class="arrow" />
+  <path d="M 800 245 L 800 265" class="arrow" />
+  <path d="M 690 292 L 710 292" class="implements-arrow" />
+
+  <!-- ========== CATEGORY MODULE ========== -->
+  <rect x="50" y="530" width="300" height="380" class="module-box" />
+  <text x="200" y="555" text-anchor="middle" class="title-text">Category Module</text>
+  <text x="200" y="573" text-anchor="middle" class="small-text" style="fill: #28a745; font-weight: 600;">Simple CRUD - Uses Base Directly</text>
+
+  <!-- Category layers -->
+  <rect x="75" y="590" width="250" height="45" class="layer-presentation" />
+  <text x="200" y="610" text-anchor="middle" class="label-text" style="fill: #1565c0;">CategoryController</text>
+  <text x="200" y="625" text-anchor="middle" class="small-text">extends BaseController</text>
+
+  <rect x="75" y="650" width="250" height="55" class="layer-application" />
+  <text x="200" y="670" text-anchor="middle" class="label-text" style="fill: #2e7d32;">CategoryService</text>
+  <text x="200" y="688" text-anchor="middle" class="small-text">extends BaseService</text>
+  <text x="200" y="700" text-anchor="middle" class="small-text">+ validation overrides</text>
+
+  <rect x="75" y="720" width="120" height="45" class="layer-domain" />
+  <text x="135" y="740" text-anchor="middle" class="label-text" style="fill: #e65100;">Category</text>
+  <text x="135" y="755" text-anchor="middle" class="small-text">Value Object</text>
+
+  <rect x="205" y="720" width="120" height="45" class="layer-domain" />
+  <text x="265" y="740" text-anchor="middle" class="label-text" style="fill: #e65100;">CategoryErrors</text>
+  <text x="265" y="755" text-anchor="middle" class="small-text">Domain errors</text>
+
+  <rect x="75" y="780" width="250" height="45" class="layer-infrastructure" />
+  <text x="200" y="800" text-anchor="middle" class="label-text" style="fill: #c2185b;">CategoryEntity + Mappers</text>
+  <text x="200" y="815" text-anchor="middle" class="small-text">Uses BaseRepository</text>
+
+  <rect x="75" y="840" width="250" height="50" class="layer-presentation" />
+  <text x="200" y="860" text-anchor="middle" class="label-text" style="fill: #1565c0;">DTOs</text>
+  <text x="200" y="878" text-anchor="middle" class="small-text">Create, Update, Response DTOs</text>
+
+  <!-- Arrows from Category to Base -->
+  <path d="M 325 610 L 510 210" class="extends-arrow" />
+  <path d="M 325 675 L 710 210" class="extends-arrow" />
+
+  <!-- ========== PRODUCT MODULE ========== -->
+  <rect x="550" y="530" width="300" height="380" class="module-box" />
+  <text x="700" y="555" text-anchor="middle" class="title-text">Product Module</text>
+  <text x="700" y="573" text-anchor="middle" class="small-text" style="fill: #0066cc; font-weight: 600;">Extended - Custom Use Cases</text>
+
+  <!-- Product layers -->
+  <rect x="575" y="590" width="250" height="55" class="layer-presentation" />
+  <text x="700" y="610" text-anchor="middle" class="label-text" style="fill: #1565c0;">ProductController</text>
+  <text x="700" y="625" text-anchor="middle" class="small-text">extends BaseController</text>
+  <text x="700" y="640" text-anchor="middle" class="small-text">+ GET /expensive, /search/:name</text>
+
+  <rect x="575" y="660" width="120" height="55" class="layer-application" />
+  <text x="635" y="680" text-anchor="middle" class="label-text" style="fill: #2e7d32;">ProductService</text>
+  <text x="635" y="695" text-anchor="middle" class="small-text">extends Base</text>
+  <text x="635" y="708" text-anchor="middle" class="small-text">+ custom</text>
+
+  <rect x="705" y="660" width="120" height="55" class="layer-application" />
+  <text x="765" y="680" text-anchor="middle" class="label-text" style="fill: #2e7d32;">Use Cases</text>
+  <text x="765" y="695" text-anchor="middle" class="small-text">FindExpensive</text>
+  <text x="765" y="708" text-anchor="middle" class="small-text">FindByName</text>
+
+  <rect x="575" y="730" width="250" height="55" class="layer-domain" />
+  <text x="700" y="750" text-anchor="middle" class="label-text" style="fill: #e65100;">ProductRepository (Interface)</text>
+  <text x="700" y="768" text-anchor="middle" class="small-text">extends BaseRepository</text>
+  <text x="700" y="780" text-anchor="middle" class="small-text">+ findExpensiveProducts()</text>
+
+  <rect x="575" y="800" width="250" height="45" class="layer-infrastructure" />
+  <text x="700" y="820" text-anchor="middle" class="label-text" style="fill: #c2185b;">TypeOrmProductRepository</text>
+  <text x="700" y="835" text-anchor="middle" class="small-text">implements ProductRepository</text>
+
+  <rect x="575" y="860" width="250" height="30" class="layer-domain" />
+  <text x="700" y="880" text-anchor="middle" class="label-text" style="fill: #e65100;">Product (Value Object) + Entity</text>
+
+  <!-- Arrows from Product to Base -->
+  <path d="M 700 590 L 700 480" class="extends-arrow" />
+
+  <!-- ========== USER MODULE ========== -->
+  <rect x="1050" y="530" width="300" height="380" class="module-box" />
+  <text x="1200" y="555" text-anchor="middle" class="title-text">User Module</text>
+  <text x="1200" y="573" text-anchor="middle" class="small-text" style="fill: #dc3545; font-weight: 600;">Custom - Full Auth Implementation</text>
+
+  <!-- User layers -->
+  <rect x="1075" y="590" width="250" height="65" class="layer-presentation" />
+  <text x="1200" y="610" text-anchor="middle" class="label-text" style="fill: #1565c0;">UserController</text>
+  <text x="1200" y="625" text-anchor="middle" class="small-text">Custom auth endpoints:</text>
+  <text x="1200" y="640" text-anchor="middle" class="small-text">signup, login, forgot/reset-password</text>
+
+  <rect x="1075" y="670" width="120" height="55" class="layer-application" />
+  <text x="1135" y="690" text-anchor="middle" class="label-text" style="fill: #2e7d32;">UserService</text>
+  <text x="1135" y="705" text-anchor="middle" class="small-text">Auth logic</text>
+  <text x="1135" y="718" text-anchor="middle" class="small-text">+ Email</text>
+
+  <rect x="1205" y="670" width="120" height="55" class="layer-application" />
+  <text x="1265" y="690" text-anchor="middle" class="label-text" style="fill: #2e7d32;">Use Case</text>
+  <text x="1265" y="705" text-anchor="middle" class="small-text">SendPassword</text>
+  <text x="1265" y="718" text-anchor="middle" class="small-text">ResetEmail</text>
+
+  <rect x="1075" y="740" width="120" height="45" class="layer-domain" />
+  <text x="1135" y="760" text-anchor="middle" class="label-text" style="fill: #e65100;">UserRepository</text>
+  <text x="1135" y="775" text-anchor="middle" class="small-text">Interface (Port)</text>
+
+  <rect x="1205" y="740" width="120" height="45" class="layer-domain" />
+  <text x="1265" y="760" text-anchor="middle" class="label-text" style="fill: #e65100;">EmailInterface</text>
+  <text x="1265" y="775" text-anchor="middle" class="small-text">Port</text>
+
+  <rect x="1075" y="800" width="120" height="45" class="layer-infrastructure" />
+  <text x="1135" y="820" text-anchor="middle" class="label-text" style="fill: #c2185b;">TypeOrm</text>
+  <text x="1135" y="835" text-anchor="middle" class="small-text">UserRepository</text>
+
+  <rect x="1205" y="800" width="120" height="45" class="layer-infrastructure" />
+  <text x="1265" y="820" text-anchor="middle" class="label-text" style="fill: #c2185b;">UserEmail</text>
+  <text x="1265" y="835" text-anchor="middle" class="small-text">Adapter</text>
+
+  <rect x="1075" y="860" width="250" height="30" class="layer-infrastructure" />
+  <text x="1200" y="880" text-anchor="middle" class="label-text" style="fill: #c2185b;">AuthMiddleware (JWT validation)</text>
+
+  <!-- Arrows within User Module -->
+  <path d="M 1135 785 L 1135 800" class="implements-arrow" />
+  <path d="M 1265 785 L 1265 800" class="implements-arrow" />
+
+  <!-- Arrow from User to Base -->
+  <path d="M 1075 760 L 890 295" class="extends-arrow" />
+
+  <!-- ========== SHARED INFRASTRUCTURE ========== -->
+  <rect x="50" y="120" width="380" height="180" style="fill: #fff3cd; stroke: #856404; stroke-width: 2; stroke-dasharray: 3,3; rx: 8;" />
+  <text x="240" y="145" text-anchor="middle" class="title-text" style="fill: #856404;">Shared Infrastructure</text>
+  
+  <rect x="70" y="160" width="100" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="120" y="180" text-anchor="middle" class="small-text" style="font-weight: 600;">Logger</text>
+  <text x="120" y="195" text-anchor="middle" class="small-text">Winston</text>
+  
+  <rect x="185" y="160" width="100" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="235" y="180" text-anchor="middle" class="small-text" style="font-weight: 600;">Email</text>
+  <text x="235" y="195" text-anchor="middle" class="small-text">Mailjet</text>
+  
+  <rect x="300" y="160" width="110" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="355" y="180" text-anchor="middle" class="small-text" style="font-weight: 600;">Error Handling</text>
+  <text x="355" y="195" text-anchor="middle" class="small-text">Filters + Mappers</text>
+
+  <rect x="70" y="220" width="100" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="120" y="240" text-anchor="middle" class="small-text" style="font-weight: 600;">Pipes</text>
+  <text x="120" y="255" text-anchor="middle" class="small-text">Validation</text>
+  
+  <rect x="185" y="220" width="100" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="235" y="240" text-anchor="middle" class="small-text" style="font-weight: 600;">Search</text>
+  <text x="235" y="255" text-anchor="middle" class="small-text">Query Builder</text>
+  
+  <rect x="300" y="220" width="110" height="45" style="fill: #ffffff; stroke: #856404; stroke-width: 1.5; rx: 5;" />
+  <text x="355" y="240" text-anchor="middle" class="small-text" style="font-weight: 600;">Config</text>
+  <text x="355" y="255" text-anchor="middle" class="small-text">Env Management</text>
+
+  <!-- ========== DATABASE LAYER ========== -->
+  <rect x="970" y="120" width="380" height="100" style="fill: #d4edda; stroke: #155724; stroke-width: 2; rx: 8;" />
+  <text x="1160" y="150" text-anchor="middle" class="title-text" style="fill: #155724;">Database Layer</text>
+  
+  <rect x="1000" y="165" width="140" height="40" style="fill: #ffffff; stroke: #155724; stroke-width: 1.5; rx: 5;" />
+  <text x="1070" y="190" text-anchor="middle" class="label-text">MongoDB</text>
+  
+  <rect x="1160" y="165" width="140" height="40" style="fill: #ffffff; stroke: #155724; stroke-width: 1.5; rx: 5;" />
+  <text x="1230" y="190" text-anchor="middle" class="label-text">TypeORM</text>
+
+  <!-- Connection arrows to database -->
+  <path d="M 890 290 L 1000 180" class="uses-arrow" />
+
+  <!-- ========== SECURITY LAYER ========== -->
+  <rect x="970" y="240" width="380" height="60" style="fill: #f8d7da; stroke: #721c24; stroke-width: 2; rx: 8;" />
+  <text x="1160" y="265" text-anchor="middle" class="title-text" style="fill: #721c24;">Security</text>
+  <text x="1160" y="285" text-anchor="middle" class="small-text">Helmet | Rate Limit | CORS | JWT Auth</text>
+
+  <!-- ========== FLOW DESCRIPTION ========== -->
+  <rect x="50" y="940" width="1300" height="140" style="fill: #f8f9fa; stroke: #dee2e6; stroke-width: 1; rx: 8;" />
+  <text x="700" y="965" text-anchor="middle" class="title-text">Request Flow (Hexagonal Architecture)</text>
+  
+  <!-- Flow boxes -->
+  <rect x="80" y="985" width="150" height="45" class="layer-presentation" />
+  <text x="155" y="1007" text-anchor="middle" class="label-text" style="fill: #1565c0;">HTTP Request</text>
+  <text x="155" y="1022" text-anchor="middle" class="small-text">Controller + DTOs</text>
+
+  <rect x="280" y="985" width="150" height="45" class="layer-application" />
+  <text x="355" y="1007" text-anchor="middle" class="label-text" style="fill: #2e7d32;">Use Case</text>
+  <text x="355" y="1022" text-anchor="middle" class="small-text">Service + Port</text>
+
+  <rect x="480" y="985" width="150" height="45" class="layer-domain" />
+  <text x="555" y="1007" text-anchor="middle" class="label-text" style="fill: #e65100;">Domain Logic</text>
+  <text x="555" y="1022" text-anchor="middle" class="small-text">Value Objects</text>
+
+  <rect x="680" y="985" width="150" height="45" class="layer-infrastructure" />
+  <text x="755" y="1007" text-anchor="middle" class="label-text" style="fill: #c2185b;">Adapter</text>
+  <text x="755" y="1022" text-anchor="middle" class="small-text">Repository Impl</text>
+
+  <rect x="880" y="985" width="150" height="45" style="fill: #d4edda; stroke: #155724; stroke-width: 2; rx: 6;" />
+  <text x="955" y="1007" text-anchor="middle" class="label-text" style="fill: #155724;">Database</text>
+  <text x="955" y="1022" text-anchor="middle" class="small-text">MongoDB</text>
+
+  <!-- Flow arrows -->
+  <path d="M 230 1008 L 280 1008" class="arrow" />
+  <path d="M 430 1008 L 480 1008" class="arrow" />
+  <path d="M 630 1008 L 680 1008" class="arrow" />
+  <path d="M 830 1008 L 880 1008" class="arrow" />
+
+  <!-- Dependency Rule -->
+  <text x="555" y="1060" text-anchor="middle" class="small-text" style="font-style: italic;">Dependency Rule: Inner layers (Domain) have no knowledge of outer layers (Infrastructure)</text>
+  <text x="555" y="1075" text-anchor="middle" class="small-text" style="font-style: italic;">All dependencies point inward - Infrastructure depends on Domain, never the reverse</text>
+</svg>

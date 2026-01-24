@@ -1,0 +1,67 @@
+version: '3.9'
+services:
+  backend:
+    container_name: backend
+    image: nestier:2.0.0
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:debug
+    ports:
+      - 3000:3000
+      - 9229:9229
+    networks:
+      - server-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URL: mongodb://mongodb:27017/shop?serverSelectionTimeoutMS=2000&authSource=admin
+
+  mongodb:
+    image: mongo:5.0.0
+    container_name: mongodb
+    #environment:
+      #- MONGO_INITDB_ROOT_USERNAME=root
+      #- MONGO_INITDB_ROOT_PASSWORD=pass12345
+    networks:
+      - server-network
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: nestier-sonarqube
+    networks:
+      - server-network
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONAR_WEB_DISABLE_SONARCLOUD_INTEGRATION=true
+      - SONAR_FORCEAUTHENTICATION=false
+      - SONAR_AUTHENTICATOR_REALM=
+      - SONAR_AUTHENTICATOR_IGNORE_STARTUP_FAILURE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    restart: unless-stopped
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
+networks:
+  server-network:

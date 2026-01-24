@@ -1,41 +1,18 @@
-import { ClassSerializerInterceptor } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppInitializer } from './app.initializer';
 import { AppModule } from './app.module';
-import { ValidationPipe } from './shared/pipes';
 
-import * as compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
-import { join } from 'path';
-import * as favicon from 'serve-favicon';
-
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true
+async function bootstrap(): Promise<void> {
+  const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
   });
-  app.setGlobalPrefix('api');
-
-  const options = new DocumentBuilder()
-    .setTitle('Nestjs Boilerplate')
-    .setDescription('This is a project aimed to be a nestjs boilerplate')
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/docs', app, document);
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(new Reflector()));
-  //app.useGlobalGuards(new RolesGuard(new Reflector()));
-  app.useGlobalPipes(new ValidationPipe());
-  app.use(
-    compression(),
-    helmet(),
-    rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 10000 // limit each IP to 100 requests per windowMs
-    }),
-    favicon(join(__dirname, '..', 'public', 'favicon.ico'))
-  );
-  await app.listen(process.env.PORT || 3000);
+  const { configService, logger } = AppInitializer.initializeApp(app);
+  try {
+    await app.listen(configService.get<string>('server.port'), configService.get<string>('server.hostname'));
+    logger.log(`Listening on port ${configService.get<string>('server.port')}`);
+  } catch (e) {
+    logger.error(`Server cannot be started on port ${configService.get<string>('server.port')}`, e);
+  }
 }
 bootstrap();

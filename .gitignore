@@ -29,10 +29,53 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
 
 # code testing coverage
 documentation
+
+/data
+
+.env.docker
+coverage-unit/
+coverage-e2e/
+dist/
+
+.jest*
+
+# SonarQube
+.sonar/
+.sonarqube/
+.scannerwork/
+sonar-project.properties.bak
+sonar-scanner.config.js.bak
+eslint-report.json
+sonar-*.json
+sonar-*.txt
+sonar-temp.properties
+
+# Docker volumes
+sonarqube_data/
+sonarqube_logs/
+sonarqube_extensions/
+
+# IDE specific
+*.swp
+*.swo
+*~
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test output files
+test-*.txt
+coverage-*.json
