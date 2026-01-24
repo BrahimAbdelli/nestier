@@ -7,7 +7,7 @@ const sonarConfig = {
   options: {
     'sonar.projectKey': 'nestier',
     'sonar.projectName': 'Nestier',
-    'sonar.projectVersion': '2.0.0',
+    'sonar.projectVersion': '2.0.1',
     'sonar.projectDescription': 'A NestJS boilerplate with clean architecture',
     'sonar.sources': 'src',
     'sonar.tests': 'src',

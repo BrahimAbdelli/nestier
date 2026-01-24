@@ -2,7 +2,7 @@ version: '3.9'
 services:
   backend:
     container_name: backend
-    image: nestier:2.0.0
+    image: nestier:2.0.1
     build:
       context: .
       target: development

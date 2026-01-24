@@ -9,8 +9,8 @@
     <a href="https://github.com/BrahimAbdelli/nestier/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
     <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg" alt="Node"></a>
     <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-5.9-blue.svg" alt="TypeScript"></a>
-    <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/nestjs-10.3.8-red.svg" alt="NestJS"></a>
-    <img src="https://img.shields.io/badge/version-2.0.0-orange.svg" alt="Version">
+    <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/nestjs-11.1.12-red.svg" alt="NestJS"></a>
+    <img src="https://img.shields.io/badge/version-2.0.1-orange.svg" alt="Version">
   </p>
 </div>
 
@@ -67,7 +67,7 @@ BaseController<T>     →  CRUD endpoints + search + pagination
 BaseService<T>        →  Business logic for all CRUD operations
 BaseRepository<T>     →  Abstract repository interface (port)
 TypeOrmBaseRepository →  Concrete TypeORM implementation (adapter)
-BaseEntity            →  Common entity fields (id, timestamps, audit)
+BaseEntity            →  Common entity fields (id, timestamps)
 ```
 
 ## Project Structure

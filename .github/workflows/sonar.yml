@@ -47,7 +47,7 @@ jobs:
         args: >
           -Dsonar.projectKey=nestier
           -Dsonar.projectName=Nestier
-          -Dsonar.projectVersion=2.0.0
+          -Dsonar.projectVersion=2.0.1
           -Dsonar.sources=src
           -Dsonar.tests=src
           -Dsonar.test.inclusions=**/*.spec.ts,**/*.test.ts,**/*.e2e-spec.ts

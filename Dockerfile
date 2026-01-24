@@ -42,7 +42,7 @@ FROM node:20-alpine AS production
 
 # Add labels for better image management
 LABEL maintainer="Brahim Abdelli"
-LABEL version="2.0.0"
+LABEL version="2.0.1"
 LABEL description="Nestier - NestJS Hexagonal Architecture Boilerplate"
 
 # Create non-root user for security
