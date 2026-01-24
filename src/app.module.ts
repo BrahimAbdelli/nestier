@@ -1,39 +1,33 @@
+import { classes } from '@automapper/classes';
+import { AutomapperModule } from '@automapper/nestjs';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CacheModule } from '@nestjs/cache-manager';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { PrometheusModule, makeCounterProvider, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
-import { join } from 'path';
-import { devConfig } from './config/dev.config';
-import { prodConfig } from './config/prod.config';
+import { APP_FILTER } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ErrorMapperService, GlobalExceptionFilter } from '@shared/common/error-handling';
+import { join } from 'node:path';
+import { BaseModule } from './modules/base/base.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ProductModule } from './modules/product/product.module';
-import { UsersModule } from './modules/users/users.module';
-import { LoggingInterceptor } from './shared/interceptor/logging.interceptor';
+import { UserModule } from './modules/user/user.module';
+import { EmailModule } from '@shared/common/email/infrastructure/modules/email.module';
+import { LoggerModule } from '@shared/common/logger/logger.module';
+import { configuration, getEnvFilePath, OrmDatabaseConfig } from '@shared/config';
 
 @Module({
   imports: [
-    PrometheusModule.register({ path: '/metrics' }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [process.env.NODE_ENV == 'DEV' ? devConfig : prodConfig]
+      load: [configuration],
+      envFilePath: getEnvFilePath(),
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule, LoggerModule],
+      useClass: OrmDatabaseConfig,
     }),
 
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      //host: process.env.DB_HOST,
-      //database: process.env.DATABASE_NAME,
-      //host: 'database',
-      url: process.env.MONGO_URL,
-      entities: ['src/modules/*/**.entity{.ts,.js}'],
-      synchronize: false,
-      logger: 'advanced-console',
-      useUnifiedTopology: true,
-      autoLoadEntities: true,
-      authSource: 'admin'
-    }),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -43,36 +37,31 @@ import { LoggingInterceptor } from './shared/interceptor/logging.interceptor';
             dir: join(__dirname, '..', 'templates'), // from src not dist folder (perhaps needs to change in Prod !!!!!!!)
             /* adapter: new HandlebarsAdapter(), // or new PugAdapter */
             options: {
-              strict: true
-            }
-          }
-        }
-      })
+              strict: true,
+            },
+          },
+        },
+      }),
     }),
-    CacheModule.register(),
-    UsersModule,
+    CacheModule.register({ isGlobal: true }),
+    BaseModule,
+    UserModule,
+    EmailModule,
     CategoryModule,
-    ProductModule
+    ProductModule,
+    AutomapperModule.forRoot({ strategyInitializer: classes() }),
   ],
   controllers: [],
   providers: [
-    makeCounterProvider({
-      name: 'count',
-      help: 'metric_help',
-      labelNames: ['method', 'origin'] as string[]
-    }),
-    makeGaugeProvider({
-      name: 'gauge',
-      help: 'metric_help'
-    }),
+    ErrorMapperService,
     {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor
-    }
-  ]
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    //consumer.apply(LoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+  configure(): void {
+    // Middleware configuration
   }
 }
