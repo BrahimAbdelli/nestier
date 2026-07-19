@@ -22,9 +22,9 @@ export class TypeOrmUserRepository extends TypeOrmBaseRepository<UserEntity, Use
   public async findByEmail(email: string): Promise<User> {
     const userEntity: UserEntity = await this.repository.findOne({
       where: {
-        email: email,
-        isDeleted: false
-      }
+        email,
+        isDeleted: false,
+      },
     });
     return this.baseEntityMapper.persistenceToDomain(userEntity);
   }
@@ -32,9 +32,9 @@ export class TypeOrmUserRepository extends TypeOrmBaseRepository<UserEntity, Use
   public async findByUsername(username: string): Promise<User> {
     const userEntity: UserEntity = await this.repository.findOne({
       where: {
-        username: username,
-        isDeleted: false
-      }
+        username,
+        isDeleted: false,
+      },
     });
     return this.baseEntityMapper.persistenceToDomain(userEntity);
   }
@@ -43,8 +43,8 @@ export class TypeOrmUserRepository extends TypeOrmBaseRepository<UserEntity, Use
     const entities: UserEntity[] = await this.repository.find({
       where: {
         status: true,
-        isDeleted: false
-      }
+        isDeleted: false,
+      },
     });
     return this.baseEntityMapper.persistencesToDomains(entities);
   }

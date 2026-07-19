@@ -9,7 +9,7 @@ import { ComparatorEnum } from '@shared/common/search/enums/comparator.enum';
 import { TestAppModule } from '@shared/common/test/test-app.module';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import * as request from 'supertest';
+import request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { DatabaseTestService } from '../../base/test/services/database-test.service';
 import { UserEntity } from '../../user/infrastructure/entities/user.entity';
@@ -18,6 +18,8 @@ import { CategoryDto, CreateCategoryDto, UpdateCategoryDto } from '../presentati
 import { mockCategoryFactory, mockCategorySearchCriteriaFactory } from './mocks/category.mock';
 import { CategoryTestService } from './services/category-test.service';
 import { CategoryErrors } from '../domain/errors/category.errors';
+
+type SupertestResponse = import('supertest').Response;
 
 describe('Category E2E', () => {
   let categoryTestService: CategoryTestService;
@@ -73,7 +75,7 @@ describe('Category E2E', () => {
 
   describe('GET /categories', () => {
     it('200 OK - should return an array of categories', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get('/categories')
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -113,7 +115,7 @@ describe('Category E2E', () => {
         skip: 0,
       });
 
-      const response: request.Response = await searchCategories(searchCriteria)
+      const response: SupertestResponse = await searchCategories(searchCriteria)
         .expect(HttpStatus.OK);
 
       const searchResponseCategories: SearchResponseDto<CategoryDto> = response.body;
@@ -137,7 +139,7 @@ describe('Category E2E', () => {
         isPaginable: false,
       });
 
-      const response: request.Response = await searchCategories(searchCriteria)
+      const response: SupertestResponse = await searchCategories(searchCriteria)
         .expect(HttpStatus.OK);
 
       const searchResponseCategories: SearchResponseDto<CategoryDto> = response.body;
@@ -163,7 +165,7 @@ describe('Category E2E', () => {
         isPaginable: false,
       });
 
-      const response: request.Response = await searchCategories(searchCriteria)
+      const response: SupertestResponse = await searchCategories(searchCriteria)
         .expect(HttpStatus.OK);
 
       const searchResponseCategories: SearchResponseDto<CategoryDto> = response.body;
@@ -180,7 +182,7 @@ describe('Category E2E', () => {
         isPaginable: false,
       });
 
-      const response: request.Response = await searchCategories(searchCriteria)
+      const response: SupertestResponse = await searchCategories(searchCriteria)
         .expect(HttpStatus.OK);
 
       const categories: CategoryDto[] = response.body.data;
@@ -194,7 +196,7 @@ describe('Category E2E', () => {
       const take: number = 2;
       const skip: number = 0;
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get(`/categories/paginate?take=${take}&skip=${skip}`)
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -209,7 +211,7 @@ describe('Category E2E', () => {
       const take: number = 3;
       const skip: number = 1;
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get(`/categories/paginate?take=${take}&skip=${skip}`)
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -243,7 +245,7 @@ describe('Category E2E', () => {
     it('400 BAD REQUEST - should reject category with empty name', async () => {
       const invalidCategory: CreateCategoryDto = mockCategoryFactory({ name: '' });
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/categories')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidCategory)
@@ -256,7 +258,7 @@ describe('Category E2E', () => {
     it('400 BAD REQUEST - should reject category with negative quantity', async () => {
       const invalidCategory: CreateCategoryDto = mockCategoryFactory({ quantity: -1 });
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/categories')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidCategory)
@@ -270,7 +272,7 @@ describe('Category E2E', () => {
       const longName: string = 'a'.repeat(101);
       const invalidCategory: CreateCategoryDto = mockCategoryFactory({ name: longName });
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/categories')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidCategory)
@@ -284,7 +286,7 @@ describe('Category E2E', () => {
       const longDescription: string = 'a'.repeat(501);
       const invalidCategory: CreateCategoryDto = mockCategoryFactory({ description: longDescription });
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/categories')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidCategory)
@@ -310,7 +312,7 @@ describe('Category E2E', () => {
         description: 'Updated description'
       };
 
-      const response: request.Response = await updateCategory(createdCategoryEntity._id.toString(), updateData)
+      const response: SupertestResponse = await updateCategory(createdCategoryEntity._id.toString(), updateData)
         .expect(HttpStatus.OK);
 
       expect(response.body.name).toBe(updateData.name);
@@ -321,7 +323,7 @@ describe('Category E2E', () => {
     it('400 BAD REQUEST - should reject update with empty name', async () => {
       const invalidUpdate: UpdateCategoryDto = { name: '' };
 
-      const response: request.Response = await updateCategory(createdCategoryEntity._id.toString(), invalidUpdate)
+      const response: SupertestResponse = await updateCategory(createdCategoryEntity._id.toString(), invalidUpdate)
         .expect(HttpStatus.BAD_REQUEST);
 
       expect(response.body.code).toBe(CategoryErrors.CATEGORY_NAME_REQUIRED().code);
@@ -334,7 +336,7 @@ describe('Category E2E', () => {
         quantity: -5
       };
 
-      const response: request.Response = await updateCategory(createdCategoryEntity._id.toString(), invalidUpdate)
+      const response: SupertestResponse = await updateCategory(createdCategoryEntity._id.toString(), invalidUpdate)
         .expect(HttpStatus.BAD_REQUEST);
 
       expect(response.body.code).toBe(CategoryErrors.CATEGORY_QUANTITY_NEGATIVE(invalidUpdate.quantity).code);
@@ -344,7 +346,7 @@ describe('Category E2E', () => {
     it('200 OK - should handle partial updates', async () => {
       const updateCategoryDto: UpdateCategoryDto = { name: 'Partially Updated' };
 
-      const response: request.Response = await updateCategory(createdCategoryEntity._id.toString(), updateCategoryDto)
+      const response: SupertestResponse = await updateCategory(createdCategoryEntity._id.toString(), updateCategoryDto)
         .expect(HttpStatus.OK);
 
       expect(response.body.name).toBe(updateCategoryDto.name);
@@ -453,7 +455,7 @@ describe('Category E2E', () => {
     });
 
     it('200 OK - should return a specific category', async () => {
-      const response: request.Response = await getCategoryById(createdCategoryEntity._id.toString())
+      const response: SupertestResponse = await getCategoryById(createdCategoryEntity._id.toString())
         .expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(createdCategoryEntity._id.toString());
@@ -508,7 +510,8 @@ describe('Category E2E', () => {
       await categoryTestService.clearCategories();
       await createTestUser();
     } catch (error: unknown) {
-      this.logger.logQueryError('Error resetting test data:', { error });
+      const errorMessage: string = error instanceof Error ? error.message : String(error);
+      logger.logQueryError(errorMessage, 'Error resetting test data:');
     }
   }
 

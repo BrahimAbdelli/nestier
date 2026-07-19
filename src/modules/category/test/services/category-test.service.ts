@@ -32,7 +32,7 @@ export class CategoryTestService implements CategoryTestInterface {
   async insertTestCategories(count: number): Promise<void> {
     const categoryDtos: CreateCategoryDto[] = mockCategoryArrayFactory(count);
 
-    const categories: CategoryEntity[] = categoryDtos.map((dto: CategoryEntity) => {
+    const categories: CategoryEntity[] = categoryDtos.map((dto: CreateCategoryDto): CategoryEntity => {
       const entity: CategoryEntity = new CategoryEntity();
       entity.name = dto.name;
       entity.quantity = dto.quantity;

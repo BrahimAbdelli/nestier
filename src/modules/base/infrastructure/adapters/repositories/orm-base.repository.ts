@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { BaseEntity } from '../../../domain/entities/base.entity';
 import { BaseRepository } from '../../../domain/repositories/base.repository';
 import { Base } from '../../../domain/value-objects/base';
@@ -25,7 +25,9 @@ export class TypeOrmBaseRepository<E extends BaseEntity, D extends Base>
   }
 
   public async findOneById(_id: ObjectId): Promise<D> {
-    const entity: E = await this.repository.findOne({ where: { _id } as FindManyOptions<E>['where'] });
+    const entity: E = await this.repository.findOne({
+      where: { _id } as FindOptionsWhere<E>,
+    });
     return this.baseEntityMapper.persistenceToDomain(entity);
   }
 
@@ -36,7 +38,7 @@ export class TypeOrmBaseRepository<E extends BaseEntity, D extends Base>
   }
 
   public async delete(id: ObjectId): Promise<void> {
-    await this.repository.delete(id);
+    await this.repository.delete({ _id: id } as FindOptionsWhere<E>);
   }
 
   public async create(domain: D): Promise<void> {

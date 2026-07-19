@@ -27,7 +27,7 @@ export async function findByField<T>(
   if (!fieldKey || !fieldValue) return entity;
 
   if (['_id', 'id'].includes(fieldKey)) {
-    const id = new ObjectId(String(fieldValue));
+    const id: ObjectId = new ObjectId(String(fieldValue));
     entity = await repository.findOne({ where: { _id: id } as unknown as FindOptionsWhere<T> });
   } else {
     const condition: FindOptionsWhere<T> = {

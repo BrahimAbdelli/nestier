@@ -11,7 +11,7 @@ import { OrderEnum } from '@shared/common/search/enums/order.enum';
 import { TestAppModule } from '@shared/common/test/test-app.module';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import * as request from 'supertest';
+import request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { DatabaseTestService } from '../../base/test/services/database-test.service';
 import { UserEntity } from '../../user/infrastructure/entities/user.entity';
@@ -20,6 +20,8 @@ import { CreateProductDto, ProductDto, UpdateProductDto } from '../presentation/
 import { mockProductFactory, mockProductSearchCriteriaFactory } from './mocks/product.mock';
 import { ProductTestService } from './services/product-test.service';
 import { ProductErrors } from '../domain/errors/product.errors';
+
+type SupertestResponse = import('supertest').Response;
 
 describe('Product E2E', () => {
   let productTestService: ProductTestService;
@@ -77,7 +79,7 @@ describe('Product E2E', () => {
 
   describe('GET /products', () => {
     it('200 OK - should return an array of products', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -117,7 +119,7 @@ describe('Product E2E', () => {
         skip: 0,
       });
 
-      const response: request.Response = await searchProducts(searchCriteria)
+      const response: SupertestResponse = await searchProducts(searchCriteria)
         .expect(HttpStatus.OK);
 
       const searchResponseProducts: SearchResponseDto<ProductDto> = response.body;
@@ -141,7 +143,7 @@ describe('Product E2E', () => {
         isPaginable: false,
       });
 
-      const response: request.Response = await searchProducts(searchCriteria)
+      const response: SupertestResponse = await searchProducts(searchCriteria)
         .expect(HttpStatus.OK);
 
       const products: ProductDto[] = response.body.data;
@@ -170,7 +172,7 @@ describe('Product E2E', () => {
         orders: { name: OrderEnum.ASC }
       });
 
-      const response: request.Response = await searchProducts(searchCriteria)
+      const response: SupertestResponse = await searchProducts(searchCriteria)
         .expect(HttpStatus.OK);
 
       const searchResponseProducts: SearchResponseDto<ProductDto> = response.body;
@@ -187,7 +189,7 @@ describe('Product E2E', () => {
       const take: number = 10;
       const skip: number = 0;
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get(`/products/paginate?take=${take}&skip=${skip}`)
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -223,7 +225,7 @@ describe('Product E2E', () => {
     it('400 BAD REQUEST - should reject product with missing required fields', async () => {
       const invalidProduct: any = { price: 100 };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -241,7 +243,7 @@ describe('Product E2E', () => {
         description: 'Test description'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -258,7 +260,7 @@ describe('Product E2E', () => {
         description: 'Test description'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -275,7 +277,7 @@ describe('Product E2E', () => {
         description: 'Test description'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -292,7 +294,7 @@ describe('Product E2E', () => {
         description: 'High-value product'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -309,7 +311,7 @@ describe('Product E2E', () => {
         description: 'Very cheap product'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/products')
         .set('Authorization', `Bearer ${testToken}`)
         .send(invalidProduct)
@@ -328,7 +330,7 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      const response: request.Response = await getProductById(productId)
+      const response: SupertestResponse = await getProductById(productId)
         .expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(productId);
@@ -338,7 +340,7 @@ describe('Product E2E', () => {
     });
 
     it('404 NOT FOUND - should return 404 if product not found', async () => {
-      const response: request.Response = await getProductById(nonExistentId.toString())
+      const response: SupertestResponse = await getProductById(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
@@ -372,7 +374,7 @@ describe('Product E2E', () => {
         description: 'Updated Product description',
       };
 
-      const response: request.Response = await updateProduct(productId, updateProductDto)
+      const response: SupertestResponse = await updateProduct(productId, updateProductDto)
         .expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(productId);
@@ -388,7 +390,7 @@ describe('Product E2E', () => {
         description: 'Updated Product description',
       };
 
-      const response: request.Response = await updateProduct(nonExistentId.toString(), updateProductDto)
+      const response: SupertestResponse = await updateProduct(nonExistentId.toString(), updateProductDto)
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
@@ -416,7 +418,7 @@ describe('Product E2E', () => {
     });
 
     it('should return 404 if product not found', async () => {
-      const response: request.Response = await archiveProduct(nonExistentId.toString())
+      const response: SupertestResponse = await archiveProduct(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
@@ -444,7 +446,7 @@ describe('Product E2E', () => {
     });
 
     it('should return 404 if product not found', async () => {
-      const response: request.Response = await unarchiveProduct(nonExistentId.toString())
+      const response: SupertestResponse = await unarchiveProduct(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
@@ -467,14 +469,14 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      const response: request.Response = await deleteProduct(productId)
+      const response: SupertestResponse = await deleteProduct(productId)
         .expect(HttpStatus.OK);
 
       expect(response.body).toBeDefined();
     });
 
     it('should return 404 if product not found', async () => {
-      const response: request.Response = await deleteProduct(nonExistentId.toString())
+      const response: SupertestResponse = await deleteProduct(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
@@ -544,7 +546,8 @@ describe('Product E2E', () => {
       await productTestService.clearProducts();
       await createTestUser();
     } catch (error: unknown) {
-      this.logger.logQueryError('Error resetting test data:', { error });
+      const errorMessage: string = error instanceof Error ? error.message : String(error);
+      logger.logQueryError(errorMessage, 'Error resetting test data:');
     }
   }
 

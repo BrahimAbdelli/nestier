@@ -2,7 +2,7 @@ version: '3.9'
 services:
   backend:
     container_name: backend
-    image: nestier:2.0.1
+    image: nestier:2.0.2
     build:
       context: .
       target: development
@@ -23,7 +23,7 @@ services:
       MONGO_URL: mongodb://mongodb:27017/shop?serverSelectionTimeoutMS=2000&authSource=admin
 
   mongodb:
-    image: mongo:5.0.0
+    image: mongo:7.0
     container_name: mongodb
     #environment:
       #- MONGO_INITDB_ROOT_USERNAME=root
@@ -33,7 +33,7 @@ services:
     ports:
       - 27017:27017
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 30s
       timeout: 10s
       retries: 3

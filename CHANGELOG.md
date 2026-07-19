@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.2] - 2026-07-19
+
+### Changed
+- Docker Compose / CI MongoDB image bumped to `mongo:7.0` (matches MongoDB driver 7)
+- README badges and tech stack versions synced with `package.json`
+- Dependency updates via `npm update --legacy-peer-deps` (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, …)
+- Enable `esModuleInterop`; E2E specs use default `supertest` import (compatible with newer `@types/supertest`)
+
+### Notes
+- TypeORM `Equal()` is **not** used in Mongo persistence: FindOperators are not applied the same way as on SQL and break lookups. Use `Equal()` when forking to MySQL/Postgres (ChainVault pattern).
+
+### Verified
+- Unit tests: 127/127
+- E2E tests: 85/85
+
 ## [2.0.1] - 2026-01-24
 
 ### Changed

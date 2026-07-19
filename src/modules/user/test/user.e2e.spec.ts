@@ -7,7 +7,7 @@ import { MockEmailService } from '@shared/common/test/mocks/mock-email.service';
 import { TestAppModule } from '@shared/common/test/test-app.module';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import * as request from 'supertest';
+import request from 'supertest';
 import { DataSource, Repository } from 'typeorm';
 import { DatabaseTestService } from '../../base/test/services/database-test.service';
 import { UserEntity } from '../infrastructure/entities/user.entity';
@@ -18,6 +18,8 @@ import { ConfigAuthModel } from '@shared/config';
 import { UserErrors } from '../domain/errors/user.errors';
 import { BaseErrors } from '@shared/common/error-handling/domain/errors/base.errors';
 import { mockUserFactory } from './mocks/user.mock';
+
+type SupertestResponse = import('supertest').Response;
 
 describe('User E2E', () => {
   let userTestService: UserTestService;
@@ -90,7 +92,7 @@ describe('User E2E', () => {
 
   describe('GET /users', () => {
     it('200 OK - should return an array of users', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -137,7 +139,7 @@ describe('User E2E', () => {
         about: 'Test user description'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto);
 
@@ -161,7 +163,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -178,7 +180,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -195,7 +197,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -212,7 +214,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -230,7 +232,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -247,7 +249,7 @@ describe('User E2E', () => {
         lastname: 'TestUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -277,7 +279,7 @@ describe('User E2E', () => {
         lastname: 'DuplicateUser'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(duplicateCreateUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -307,7 +309,7 @@ describe('User E2E', () => {
         lastname: 'DuplicateEmail'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(duplicateEmail)
         .expect(HttpStatus.BAD_REQUEST);
@@ -331,7 +333,7 @@ describe('User E2E', () => {
     });
 
     it('200 OK - should return a specific user', async () => {
-      const response: request.Response = await getUserById(createdUser._id.toString())
+      const response: SupertestResponse = await getUserById(createdUser._id.toString())
         .expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(createdUser._id.toString());
@@ -341,7 +343,7 @@ describe('User E2E', () => {
     });
 
     it('404 NOT FOUND - should handle non-existent user ID', async () => {
-      const response: request.Response = await getUserById(nonExistentId.toString())
+      const response: SupertestResponse = await getUserById(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body.code).toBe('NOT_FOUND');
@@ -363,7 +365,7 @@ describe('User E2E', () => {
     });
 
     it('200 OK - should return user by email', async () => {
-      const response: request.Response = await getUserByEmail(createdUser.email)
+      const response: SupertestResponse = await getUserByEmail(createdUser.email)
         .expect(HttpStatus.OK);
 
       expect(response.body.email).toBe(createdUser.email);
@@ -395,7 +397,7 @@ describe('User E2E', () => {
     });
 
     it('200 OK - should return user by username', async () => {
-      const response: request.Response = await getUserByUsername(createdUser.username)
+      const response: SupertestResponse = await getUserByUsername(createdUser.username)
         .expect(HttpStatus.OK);
 
       expect(response.body.username).toBe(createdUser.username);
@@ -432,7 +434,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.CREATED);
@@ -452,7 +454,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.NOT_FOUND);
@@ -470,7 +472,7 @@ describe('User E2E', () => {
         password: 'wrongpassword'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -485,7 +487,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.NOT_FOUND);
@@ -499,7 +501,7 @@ describe('User E2E', () => {
         password: ''
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -533,7 +535,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await updateUser(createdUser._id.toString(), updateUserDto)
+      const response: SupertestResponse = await updateUser(createdUser._id.toString(), updateUserDto)
         .expect(HttpStatus.OK);
       expect(response.body.lastname).toBe(updateUserDto.lastname);
       expect(response.body.address).toBe(updateUserDto.address);
@@ -549,7 +551,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await updateUser(createdUser._id.toString(), updateUserDto)
+      const response: SupertestResponse = await updateUser(createdUser._id.toString(), updateUserDto)
         .expect(HttpStatus.OK);
 
       expect(response.body).toHaveProperty('_id');
@@ -573,7 +575,7 @@ describe('User E2E', () => {
         password: 'password123'
       };
 
-      const response: request.Response = await updateUser(nonExistentId.toString(), updateUserDto)
+      const response: SupertestResponse = await updateUser(nonExistentId.toString(), updateUserDto)
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body.message).toContain('Entity not found');
@@ -673,7 +675,7 @@ describe('User E2E', () => {
     });
 
     it('201 CREATED - should send password reset email', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post(`/users/forgot-password/${createdUser.email}`)
         .expect(HttpStatus.CREATED);
 
@@ -716,7 +718,7 @@ describe('User E2E', () => {
         where: { username: userData.username }
       });
 
-      const forgotPasswordResponse: request.Response = await request(app.getHttpServer())
+      const forgotPasswordResponse: SupertestResponse = await request(app.getHttpServer())
         .post(`/users/forgot-password/${createdUser.email}`);
       resetToken = forgotPasswordResponse.body.resetPasswordToken;
     });
@@ -731,7 +733,7 @@ describe('User E2E', () => {
         password: 'newpassword123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.CREATED);
@@ -747,7 +749,7 @@ describe('User E2E', () => {
         password: 'newpassword123'
       };
 
-      const loginResponse: request.Response = await request(app.getHttpServer())
+      const loginResponse: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto);
 
@@ -763,7 +765,7 @@ describe('User E2E', () => {
         password: 'newpassword123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -791,7 +793,7 @@ describe('User E2E', () => {
         password: 'newpassword123'
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.UNAUTHORIZED);
