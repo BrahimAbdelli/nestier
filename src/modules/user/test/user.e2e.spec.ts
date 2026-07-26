@@ -750,7 +750,7 @@ describe('User E2E', () => {
     });
 
     it('401 UNAUTHORIZED - should reject expired reset token', async () => {
-      const secret: string = configService.get<string>('secret');
+      const secret: string = configService.get<string>('auth.secret');
       const expiredToken: string = jwt.sign(
         {
           email: createdUser.email,
