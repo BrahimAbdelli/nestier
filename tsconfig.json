@@ -11,7 +11,7 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "rootDir": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -20,11 +20,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@shared": ["src/shared"],
-      "@shared/*": ["src/shared/*"],
-      "@shared/common/*": ["src/shared/common/*"]
+      "@shared": ["./src/shared"],
+      "@shared/*": ["./src/shared/*"],
+      "@shared/common/*": ["./src/shared/common/*"]
     }
   },
+  "include": ["src/**/*"],
   "watchOptions": {
     "watchFile": "fixedPollingInterval"
   }

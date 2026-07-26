@@ -12,6 +12,7 @@
 ### Fixed
 - Easy ESLint wins: unused imports/vars, redundant `return await` / useless `async`, missing return types, typed user route params (~36 warnings cleared)
 - CI `format:check`: force LF via `.editorconfig` / Prettier / `.gitattributes` (was CRLF locally vs LF on Linux runners)
+- TypeScript 6 build: set `rootDir` to `./src`, drop deprecated `baseUrl` (paths made relative)
 
 ### Changed (dependencies)
 - `npm update --legacy-peer-deps` within caret ranges (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, eslint 10.8.0, …)
