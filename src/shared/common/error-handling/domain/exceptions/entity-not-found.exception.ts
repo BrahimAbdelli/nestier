@@ -8,6 +8,3 @@ export class EntityNotFoundDomainException extends DomainException {
     super('Resource not found', 'NOT_FOUND');
   }
 }
-
-
-

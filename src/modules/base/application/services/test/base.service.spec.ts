@@ -2,21 +2,14 @@ import { REQUEST } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaginationConstants } from '@shared/common/constants';
 import { Logger } from '@shared/common/logger/logger.service';
+import { ComparisonTypeEnum, ComparatorEnum, OrderEnum } from '@shared/common/search';
 import { SearchResponse } from '@shared/common/search/domains/search-response';
 import { ResponsePaginate } from '@shared/common/types/response-paginate.type';
 import { ObjectId } from 'mongodb';
 import { IGetUserAuthInfoRequest } from '../../../../user/domain/value-objects/user-request.interface';
-import { BaseEntity } from '../../../domain/entities/base.entity';
 import { BaseRepository } from '../../../domain/repositories/base.repository';
 import { Base } from '../../../domain/value-objects/base';
 import { BaseService } from '../base.service';
-import { ComparisonTypeEnum, ComparatorEnum, OrderEnum } from '@shared/common/search';
-
-class Entity extends BaseEntity {
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 class Domain extends Base {
   name: string;
@@ -25,12 +18,13 @@ class Domain extends Base {
 }
 
 describe('BaseService', () => {
-  let service: BaseService<Entity, Domain>;
-  let mockRepository: jest.Mocked<BaseRepository<Entity, Domain>>;
+  let service: BaseService<Domain>;
+  let mockRepository: jest.Mocked<BaseRepository<Domain>>;
   let mockLogger: jest.Mocked<Logger>;
   let mockRequest: IGetUserAuthInfoRequest;
 
   const testId: ObjectId = new ObjectId();
+  const testIdString: string = testId.toHexString();
   const testDomain: Domain = {
     _id: testId,
     name: 'Test Item',
@@ -48,7 +42,7 @@ describe('BaseService', () => {
       save: jest.fn(),
       delete: jest.fn(),
       clear: jest.fn(),
-    } as jest.Mocked<BaseRepository<Entity, Domain>>;
+    } as jest.Mocked<BaseRepository<Domain>>;
 
     mockLogger = {
       log: jest.fn(),
@@ -71,11 +65,7 @@ describe('BaseService', () => {
         {
           provide: BaseService,
           useFactory: () => {
-            return new BaseService<Entity, Domain>(
-              mockRepository,
-              mockRequest,
-              mockLogger,
-            );
+            return new BaseService<Domain>(mockRepository, mockRequest, mockLogger);
           },
         },
         { provide: BaseRepository, useValue: mockRepository },
@@ -84,7 +74,7 @@ describe('BaseService', () => {
       ],
     }).compile();
 
-    service = module.get<BaseService<Entity, Domain>>(BaseService);
+    service = module.get<BaseService<Domain>>(BaseService);
   });
 
   afterEach(() => {
@@ -115,17 +105,17 @@ describe('BaseService', () => {
     it('should return a domain by id', async () => {
       mockRepository.findOneById.mockResolvedValue(testDomain);
 
-      const domain: Domain = await service.findOneById(testId);
+      const domain: Domain = await service.findOneById(testIdString);
 
       expect(domain).toEqual(testDomain);
-      expect(mockRepository.findOneById).toHaveBeenCalledWith(testId);
+      expect(mockRepository.findOneById).toHaveBeenCalledWith(testIdString);
     });
 
     it('should throw error when entity not found', async () => {
       mockRepository.findOneById.mockResolvedValue(null);
 
-      await expect(service.findOneById(testId)).rejects.toThrow('Resource not found');
-      expect(mockLogger.error).toHaveBeenCalledWith('Entity not found', { _id: testId });
+      await expect(service.findOneById(testIdString)).rejects.toThrow('Resource not found');
+      expect(mockLogger.error).toHaveBeenCalledWith('Entity not found', { _id: testIdString });
     });
   });
 
@@ -143,10 +133,10 @@ describe('BaseService', () => {
     });
 
     it('should create domain without user info when no user in request', async () => {
-      const serviceWithoutUser: BaseService<Entity, Domain> = new BaseService<Entity, Domain>(
+      const serviceWithoutUser: BaseService<Domain> = new BaseService<Domain>(
         mockRepository,
         { user: undefined } as IGetUserAuthInfoRequest,
-        mockLogger,
+        mockLogger
       );
       const newDomain: Domain = { name: 'Test' };
       mockRepository.create.mockResolvedValue();
@@ -167,7 +157,7 @@ describe('BaseService', () => {
       const domain: Domain = await service.update(updatedDomain);
 
       expect(domain).toBeDefined();
-      expect(mockRepository.findOneById).toHaveBeenCalledWith(updatedDomain._id);
+      expect(mockRepository.findOneById).toHaveBeenCalledWith(testIdString);
       expect(mockRepository.save).toHaveBeenCalled();
     });
 
@@ -183,16 +173,16 @@ describe('BaseService', () => {
       mockRepository.findOneById.mockResolvedValue(testDomain);
       mockRepository.delete.mockResolvedValue();
 
-      await service.delete(testId);
+      await service.delete(testIdString);
 
-      expect(mockRepository.findOneById).toHaveBeenCalledWith(testId);
-      expect(mockRepository.delete).toHaveBeenCalledWith(testId);
+      expect(mockRepository.findOneById).toHaveBeenCalledWith(testIdString);
+      expect(mockRepository.delete).toHaveBeenCalledWith(testIdString);
     });
 
     it('should throw error when entity to delete not found', async () => {
       mockRepository.findOneById.mockResolvedValue(null);
 
-      await expect(service.delete(testId)).rejects.toThrow('Resource not found');
+      await expect(service.delete(testIdString)).rejects.toThrow('Resource not found');
     });
   });
 
@@ -201,34 +191,29 @@ describe('BaseService', () => {
       mockRepository.findOneById.mockResolvedValue({ ...testDomain });
       mockRepository.save.mockResolvedValue(testDomain);
 
-      await service.softDelete(testId, true);
+      await service.softDelete(testIdString, true);
 
-      expect(mockRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ isDeleted: true }),
-      );
+      expect(mockRepository.save).toHaveBeenCalledWith(expect.objectContaining({ isDeleted: true }));
     });
 
     it('should unarchive an entity', async () => {
       mockRepository.findOneById.mockResolvedValue({ ...testDomain, isDeleted: true });
       mockRepository.save.mockResolvedValue(testDomain);
 
-      await service.softDelete(testId, false);
+      await service.softDelete(testIdString, false);
 
-      expect(mockRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({ isDeleted: false }),
-      );
+      expect(mockRepository.save).toHaveBeenCalledWith(expect.objectContaining({ isDeleted: false }));
     });
 
     it('should throw error when entity not found', async () => {
       mockRepository.findOneById.mockResolvedValue(null);
 
-      await expect(service.softDelete(testId, true)).rejects.toThrow('Resource not found');
+      await expect(service.softDelete(testIdString, true)).rejects.toThrow('Resource not found');
     });
   });
 
   describe('paginate', () => {
     it('should return paginated results with default values', async () => {
-      const paginatedResult: ResponsePaginate<Domain> = { data: [testDomain], count: 1 };
       mockRepository.findAndCount.mockResolvedValue([[testDomain], 1]);
 
       const result: ResponsePaginate<Domain> = await service.paginate(undefined, undefined);
@@ -237,23 +222,23 @@ describe('BaseService', () => {
       expect(result.count).toBe(1);
       expect(mockRepository.findAndCount).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { isDeleted: false },
+          onlyNotDeleted: true,
           take: PaginationConstants.DEFAULT_TAKE,
           skip: PaginationConstants.DEFAULT_SKIP,
-        }),
+        })
       );
     });
 
     it('should return paginated results with custom take and skip', async () => {
       mockRepository.findAndCount.mockResolvedValue([[testDomain], 1]);
 
-      const result: ResponsePaginate<Domain> = await service.paginate(5, 10);
+      await service.paginate(5, 10);
 
       expect(mockRepository.findAndCount).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 5,
           skip: 10,
-        }),
+        })
       );
     });
   });
@@ -295,6 +280,12 @@ describe('BaseService', () => {
 
       expect(result.data).toEqual([testDomain]);
       expect(result.count).toBe(1);
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          attributes: [{ key: 'name', value: 'Test', comparator: ComparatorEnum.EQUALS }],
+          comparisonType: ComparisonTypeEnum.AND,
+        })
+      );
     });
   });
 });

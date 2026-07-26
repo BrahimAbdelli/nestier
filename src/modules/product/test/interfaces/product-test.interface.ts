@@ -14,4 +14,3 @@ export interface ProductTestInterface {
   // Cleanup operations
   cleanupAfterTest(): Promise<void>;
 }
-

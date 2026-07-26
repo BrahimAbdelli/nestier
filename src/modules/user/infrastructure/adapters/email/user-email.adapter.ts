@@ -9,7 +9,7 @@ import { GenericEmailData } from '@shared/common/email/domain/value-objects/gene
 export class UserEmailAdapter implements UserEmailInterface {
   constructor(
     private readonly emailService: EmailService,
-    private readonly logger: Logger,
+    private readonly logger: Logger
   ) {}
 
   public async sendPasswordResetEmail(request: UserResetPasswordRequest): Promise<void> {

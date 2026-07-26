@@ -5,7 +5,6 @@ import { ObjectId } from 'mongodb';
 import { IGetUserAuthInfoRequest } from '../../../../user/domain/value-objects/user-request.interface';
 import { ProductService } from '../product.service';
 import { BaseRepository } from '../../../../base/domain/repositories/base.repository';
-import { ProductEntity } from '../../../infrastructure/entities/product.entity';
 import { Product } from '../../../domain/value-objects/product';
 import { FindExpensiveProductsUseCase } from '../../use-cases/find-expensive-products.use-case';
 import { FindProductsByNameUseCase } from '../../use-cases/find-products-by-name.use-case';
@@ -14,7 +13,7 @@ import { ConfigProductModel } from '@shared/config/models/config-product.model';
 
 describe('ProductService', () => {
   let service: ProductService;
-  let mockRepository: jest.Mocked<BaseRepository<ProductEntity, Product>>;
+  let mockRepository: jest.Mocked<BaseRepository<Product>>;
   let mockLogger: jest.Mocked<Logger>;
   let mockConfigService: jest.Mocked<ConfigService>;
   let mockFindExpensiveUseCase: jest.Mocked<FindExpensiveProductsUseCase>;
@@ -50,7 +49,7 @@ describe('ProductService', () => {
       save: jest.fn(),
       delete: jest.fn(),
       clear: jest.fn(),
-    } as jest.Mocked<BaseRepository<ProductEntity, Product>>;
+    } as jest.Mocked<BaseRepository<Product>>;
 
     mockLogger = {
       log: jest.fn(),
@@ -74,7 +73,7 @@ describe('ProductService', () => {
 
     mockFindExpensiveUseCase = {
       execute: jest.fn(),
-    } as unknown as jest.Mocked<FindExpensiveProductsUseCase>;;
+    } as unknown as jest.Mocked<FindExpensiveProductsUseCase>;
 
     mockFindByNameUseCase = {
       execute: jest.fn(),
@@ -163,9 +162,9 @@ describe('ProductService', () => {
       mockRepository.findOneById.mockResolvedValue(testProduct);
       mockRepository.delete.mockResolvedValue();
 
-      await service.delete(testId);
+      await service.delete(testId.toHexString());
 
-      expect(mockRepository.delete).toHaveBeenCalledWith(testId);
+      expect(mockRepository.delete).toHaveBeenCalledWith(testId.toHexString());
     });
   });
 

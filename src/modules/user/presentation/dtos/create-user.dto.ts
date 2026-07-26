@@ -61,4 +61,3 @@ export class CreateUserDto extends BaseDto {
   @AutoMap()
   public about?: string;
 }
-

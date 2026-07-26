@@ -33,4 +33,3 @@ export class UserEntityMapper extends BaseEntityMapperInterface<UserEntity, User
     return this.classMapper.mapArray(source, User, UserEntity);
   }
 }
-

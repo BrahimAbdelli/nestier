@@ -7,9 +7,8 @@ import { MockEmailService } from '@shared/common/test/mocks/mock-email.service';
 import { TestAppModule } from '@shared/common/test/test-app.module';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import * as request from 'supertest';
-import { DataSource, Repository } from 'typeorm';
-import { DatabaseTestService } from '../../base/test/services/database-test.service';
+import request from 'supertest';
+import { Repository } from 'typeorm';
 import { UserEntity } from '../infrastructure/entities/user.entity';
 import { CreateUserDto, UpdateNewPasswordDto, UpdateUserDto, UserLoginDto } from '../presentation/dtos';
 import { UserTestService } from './services/user-test.service';
@@ -19,9 +18,10 @@ import { UserErrors } from '../domain/errors/user.errors';
 import { BaseErrors } from '@shared/common/error-handling/domain/errors/base.errors';
 import { mockUserFactory } from './mocks/user.mock';
 
+type SupertestResponse = import('supertest').Response;
+
 describe('User E2E', () => {
   let userTestService: UserTestService;
-  let databaseTestService: DatabaseTestService;
   let userRepository: Repository<UserEntity>;
   let app: INestApplication;
   let testToken: string;
@@ -39,21 +39,24 @@ describe('User E2E', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestAppModule], providers: [{
-        provide: ConfigService,
-        useValue: {
-          get: jest.fn((key: string) => {
-            const config: ConfigAuthModel = {
-              'secret': 'secret-key-for-tests',
-              'resetPasswordExpiration': '1h',
-              'resetPasswordUrl': 'http://localhost:3000/reset-password',
-              'tokenExpiration': '1h',
-              'supportEmail': 'test@example.com',
-            };
-            return config[key];
-          }),
+      imports: [TestAppModule],
+      providers: [
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              const config: ConfigAuthModel = {
+                secret: 'secret-key-for-tests',
+                resetPasswordExpiration: '1h',
+                resetPasswordUrl: 'http://localhost:3000/reset-password',
+                tokenExpiration: '1h',
+                supportEmail: 'test@example.com',
+              };
+              return config[key];
+            }),
+          },
         },
-      }]
+      ],
     })
       .overrideProvider(EmailService)
       .useClass(MockEmailService)
@@ -62,13 +65,11 @@ describe('User E2E', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    const dataSource: DataSource = moduleFixture.get<DataSource>(DataSource);
     logger = moduleFixture.get<Logger>(Logger);
     configService = moduleFixture.get<ConfigService>(ConfigService);
 
     userRepository = moduleFixture.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
     userTestService = new UserTestService(userRepository, logger);
-    databaseTestService = new DatabaseTestService(dataSource, logger);
 
     loggerErrorSpy = jest.spyOn(logger, 'error');
     loggerWarnSpy = jest.spyOn(logger, 'warn');
@@ -90,7 +91,7 @@ describe('User E2E', () => {
 
   describe('GET /users', () => {
     it('200 OK - should return an array of users', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${testToken}`)
         .expect(HttpStatus.OK);
@@ -100,13 +101,9 @@ describe('User E2E', () => {
     });
 
     it('401 UNAUTHORIZED - should reject request without token', async () => {
-      await request(app.getHttpServer())
-        .get('/users')
-        .expect(HttpStatus.UNAUTHORIZED);
+      await request(app.getHttpServer()).get('/users').expect(HttpStatus.UNAUTHORIZED);
 
-      expect(loggerWarnSpy).toHaveBeenCalledWith(
-        'Authentication failed: No token provided'
-      );
+      expect(loggerWarnSpy).toHaveBeenCalledWith('Authentication failed: No token provided');
     });
 
     it('401 UNAUTHORIZED - should reject request with invalid token', async () => {
@@ -134,17 +131,15 @@ describe('User E2E', () => {
         phone: '+1234567890',
         roles: ['user'],
         image: 'https://example.com/image.jpg',
-        about: 'Test user description'
+        about: 'Test user description',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
-        .post('/users/signup')
-        .send(createUserDto);
+      const response: SupertestResponse = await request(app.getHttpServer()).post('/users/signup').send(createUserDto);
 
       expect(response.status).toBe(HttpStatus.CREATED);
 
       const existingUser: UserEntity = await userRepository.findOne({
-        where: { username: createUserDto.username }
+        where: { username: createUserDto.username },
       });
       expect(existingUser).toBeDefined();
       expect(existingUser._id).toBeDefined();
@@ -158,10 +153,10 @@ describe('User E2E', () => {
         username: '',
         email: 'test@example.com',
         password: 'password123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -175,10 +170,10 @@ describe('User E2E', () => {
         username: 'testuser',
         email: 'invalid-email',
         password: 'password123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -192,10 +187,10 @@ describe('User E2E', () => {
         username: 'testuser',
         email: 'test@example.com',
         password: '123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -209,10 +204,10 @@ describe('User E2E', () => {
         username: 'ab',
         email: 'test@example.com',
         password: 'password123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -227,10 +222,10 @@ describe('User E2E', () => {
         username: longUsername,
         email: 'test@example.com',
         password: 'password123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -244,10 +239,10 @@ describe('User E2E', () => {
         username: 'test@user!',
         email: 'test@example.com',
         password: 'password123',
-        lastname: 'TestUser'
+        lastname: 'TestUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(createUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -262,22 +257,19 @@ describe('User E2E', () => {
         username: `duplicateuser${timestamp}`,
         email: `duplicateuser${timestamp}@example.com`,
         password: 'password123',
-        lastname: 'DuplicateUser'
+        lastname: 'DuplicateUser',
       };
 
-      await request(app.getHttpServer())
-        .post('/users/signup')
-        .send(createUserDto)
-        .expect(HttpStatus.CREATED);
+      await request(app.getHttpServer()).post('/users/signup').send(createUserDto).expect(HttpStatus.CREATED);
 
       const duplicateCreateUserDto: CreateUserDto = {
         username: `duplicateuser${timestamp}`,
         email: `different${timestamp}@example.com`,
         password: 'password123',
-        lastname: 'DuplicateUser'
+        lastname: 'DuplicateUser',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(duplicateCreateUserDto)
         .expect(HttpStatus.BAD_REQUEST);
@@ -292,28 +284,29 @@ describe('User E2E', () => {
         username: `uniqueuser${timestamp}`,
         email: `duplicateemail${timestamp}@example.com`,
         password: 'password123',
-        lastname: 'DuplicateEmail'
+        lastname: 'DuplicateEmail',
       };
 
-      await request(app.getHttpServer())
-        .post('/users/signup')
-        .send(createUserDto)
-        .expect(HttpStatus.CREATED);
+      await request(app.getHttpServer()).post('/users/signup').send(createUserDto).expect(HttpStatus.CREATED);
 
       const duplicateEmail: CreateUserDto = {
         username: `differentuser${timestamp}`,
         email: `duplicateemail${timestamp}@example.com`,
         password: 'password123',
-        lastname: 'DuplicateEmail'
+        lastname: 'DuplicateEmail',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/signup')
         .send(duplicateEmail)
         .expect(HttpStatus.BAD_REQUEST);
 
-      expect(response.body.code).toBe(BaseErrors.FIELD_NOT_UNIQUE('email', `duplicateemail${timestamp}@example.com`).code);
-      expect(response.body.message).toBe(BaseErrors.FIELD_NOT_UNIQUE('email', `duplicateemail${timestamp}@example.com`).message);
+      expect(response.body.code).toBe(
+        BaseErrors.FIELD_NOT_UNIQUE('email', `duplicateemail${timestamp}@example.com`).code
+      );
+      expect(response.body.message).toBe(
+        BaseErrors.FIELD_NOT_UNIQUE('email', `duplicateemail${timestamp}@example.com`).message
+      );
     });
   });
 
@@ -325,14 +318,13 @@ describe('User E2E', () => {
         username: 'findtest',
         email: 'findtest@example.com',
         password: 'password123',
-        lastname: 'FindTest'
+        lastname: 'FindTest',
       };
       createdUser = await postUser(createUserDto);
     });
 
     it('200 OK - should return a specific user', async () => {
-      const response: request.Response = await getUserById(createdUser._id.toString())
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await getUserById(createdUser._id.toString()).expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(createdUser._id.toString());
       expect(response.body.username).toBe(createdUser.username);
@@ -341,8 +333,7 @@ describe('User E2E', () => {
     });
 
     it('404 NOT FOUND - should handle non-existent user ID', async () => {
-      const response: request.Response = await getUserById(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await getUserById(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.body.code).toBe('NOT_FOUND');
       expect(loggerErrorSpy).toHaveBeenCalledWith('Entity not found', expect.any(Object));
@@ -357,22 +348,20 @@ describe('User E2E', () => {
         username: 'emailtest',
         email: 'emailtest@example.com',
         password: 'password123',
-        lastname: 'EmailTest'
+        lastname: 'EmailTest',
       };
       createdUser = await postUser(createUserDto);
     });
 
     it('200 OK - should return user by email', async () => {
-      const response: request.Response = await getUserByEmail(createdUser.email)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await getUserByEmail(createdUser.email).expect(HttpStatus.OK);
 
       expect(response.body.email).toBe(createdUser.email);
       expect(response.body.username).toBe(createdUser.username);
     });
 
     it('404 NOT FOUND - should handle non-existent email', async () => {
-      await getUserByEmail('nonexistent@example.com')
-        .expect(HttpStatus.NOT_FOUND);
+      await getUserByEmail('nonexistent@example.com').expect(HttpStatus.NOT_FOUND);
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'User not found',
@@ -389,22 +378,20 @@ describe('User E2E', () => {
         username: 'usernametest',
         email: 'usernametest@example.com',
         password: 'password123',
-        lastname: 'UsernameTest'
+        lastname: 'UsernameTest',
       };
       createdUser = await postUser(createUserDto);
     });
 
     it('200 OK - should return user by username', async () => {
-      const response: request.Response = await getUserByUsername(createdUser.username)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await getUserByUsername(createdUser.username).expect(HttpStatus.OK);
 
       expect(response.body.username).toBe(createdUser.username);
       expect(response.body.email).toBe(createdUser.email);
     });
 
     it('404 NOT FOUND - should handle non-existent username', async () => {
-      await getUserByUsername('nonexistentuser')
-        .expect(HttpStatus.NOT_FOUND);
+      await getUserByUsername('nonexistentuser').expect(HttpStatus.NOT_FOUND);
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'User not found',
@@ -421,7 +408,7 @@ describe('User E2E', () => {
         username: 'logintest',
         email: 'logintest@example.com',
         password: 'password123',
-        lastname: 'LoginTest'
+        lastname: 'LoginTest',
       };
       createdUser = await postUser(createUserDto);
     });
@@ -429,10 +416,10 @@ describe('User E2E', () => {
     it('201 CREATED - should login with valid credentials', async () => {
       const loginUserDto: UserLoginDto = {
         email: createdUser.email,
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.CREATED);
@@ -449,10 +436,10 @@ describe('User E2E', () => {
     it('404 NOT FOUND - should reject login with non-existent email', async () => {
       const loginUserDto: UserLoginDto = {
         email: 'nonexistent@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.NOT_FOUND);
@@ -467,10 +454,10 @@ describe('User E2E', () => {
     it('401 UNAUTHORIZED - should reject login with invalid password', async () => {
       const loginUserDto: UserLoginDto = {
         email: createdUser.email,
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -482,10 +469,10 @@ describe('User E2E', () => {
     it('404 NOT FOUND - should reject login with empty email', async () => {
       const loginUserDto: UserLoginDto = {
         email: '',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.NOT_FOUND);
@@ -496,10 +483,10 @@ describe('User E2E', () => {
     it('401 UNAUTHORIZED - should reject login with empty password', async () => {
       const loginUserDto: UserLoginDto = {
         email: createdUser.email,
-        password: ''
+        password: '',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -517,7 +504,7 @@ describe('User E2E', () => {
         username: 'updatetest',
         email: 'updatetest@example.com',
         password: 'password123',
-        lastname: 'UpdateTest'
+        lastname: 'UpdateTest',
       };
       createdUser = await postUser(createUserDto);
     });
@@ -530,11 +517,12 @@ describe('User E2E', () => {
         about: 'Updated about information',
         username: createdUser.username,
         email: createdUser.email,
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await updateUser(createdUser._id.toString(), updateUserDto)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await updateUser(createdUser._id.toString(), updateUserDto).expect(
+        HttpStatus.OK
+      );
       expect(response.body.lastname).toBe(updateUserDto.lastname);
       expect(response.body.address).toBe(updateUserDto.address);
       expect(response.body.phone).toBe(updateUserDto.phone);
@@ -546,11 +534,12 @@ describe('User E2E', () => {
         lastname: 'Partially Updated',
         username: createdUser.username,
         email: createdUser.email,
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await updateUser(createdUser._id.toString(), updateUserDto)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await updateUser(createdUser._id.toString(), updateUserDto).expect(
+        HttpStatus.OK
+      );
 
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('username', createdUser.username);
@@ -559,7 +548,7 @@ describe('User E2E', () => {
       expect(response.body).not.toHaveProperty('password');
 
       const updatedEntity: UserEntity = await userRepository.findOne({
-        where: { _id: new ObjectId(createdUser._id.toString()) }
+        where: { _id: new ObjectId(createdUser._id.toString()) },
       });
       expect(updatedEntity?.email).toBe(createdUser.email);
       expect(updatedEntity?.username).toBe(createdUser.username);
@@ -570,11 +559,12 @@ describe('User E2E', () => {
         lastname: 'Updated',
         username: 'test',
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const response: request.Response = await updateUser(nonExistentId.toString(), updateUserDto)
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await updateUser(nonExistentId.toString(), updateUserDto).expect(
+        HttpStatus.NOT_FOUND
+      );
 
       expect(response.body.message).toContain('Entity not found');
     });
@@ -584,27 +574,22 @@ describe('User E2E', () => {
     it('200 OK - should archive a user', async () => {
       const createdUser: UserEntity = await createTestUserEntity({
         username: `archivetest${Date.now()}`,
-        email: `archivetest${Date.now()}@example.com`
+        email: `archivetest${Date.now()}@example.com`,
       });
       const archiveId: string = createdUser._id.toString();
 
-      await archiveUser(archiveId)
-        .expect(HttpStatus.OK);
+      await archiveUser(archiveId).expect(HttpStatus.OK);
 
       const archivedUser: UserEntity = await userRepository.findOne({
-        where: { _id: new ObjectId(archiveId) }
+        where: { _id: new ObjectId(archiveId) },
       });
       expect(archivedUser?.isDeleted).toBe(true);
     });
 
     it('404 NOT FOUND - should handle archiving non-existent user', async () => {
-      await archiveUser(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      await archiveUser(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
-      expect(loggerErrorSpy).toHaveBeenCalledWith(
-        'User not found',
-        expect.objectContaining({ id: nonExistentId })
-      );
+      expect(loggerErrorSpy).toHaveBeenCalledWith('User not found', expect.objectContaining({ id: nonExistentId }));
     });
   });
 
@@ -612,35 +597,29 @@ describe('User E2E', () => {
     it('200 OK - should unarchive a user', async () => {
       const createdUser: UserEntity = await createTestUserEntity({
         username: `unarchivetest${Date.now()}`,
-        email: `unarchivetest${Date.now()}@example.com`
+        email: `unarchivetest${Date.now()}@example.com`,
       });
       const unarchiveId: string = createdUser._id.toString();
 
-      await archiveUser(unarchiveId)
-        .expect(HttpStatus.OK);
+      await archiveUser(unarchiveId).expect(HttpStatus.OK);
 
       const archivedUser: UserEntity = await userRepository.findOne({
-        where: { _id: new ObjectId(unarchiveId) }
+        where: { _id: new ObjectId(unarchiveId) },
       });
       expect(archivedUser?.isDeleted).toBe(true);
 
-      await unarchiveUser(unarchiveId)
-        .expect(HttpStatus.OK);
+      await unarchiveUser(unarchiveId).expect(HttpStatus.OK);
 
       const unarchivedUser: UserEntity = await userRepository.findOne({
-        where: { _id: new ObjectId(unarchiveId) }
+        where: { _id: new ObjectId(unarchiveId) },
       });
       expect(unarchivedUser?.isDeleted).toBe(false);
     });
 
     it('404 NOT FOUND - should handle unarchiving non-existent user', async () => {
-      await unarchiveUser(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      await unarchiveUser(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
-      expect(loggerErrorSpy).toHaveBeenCalledWith(
-        'User not found',
-        expect.objectContaining({ id: nonExistentId })
-      );
+      expect(loggerErrorSpy).toHaveBeenCalledWith('User not found', expect.objectContaining({ id: nonExistentId }));
     });
   });
 
@@ -655,16 +634,13 @@ describe('User E2E', () => {
         username: `fptest${uniqueId}`,
         email: `fptest${uniqueId}@example.com`,
         password: 'password123',
-        lastname: 'ForgotPasswordTest'
+        lastname: 'ForgotPasswordTest',
       };
 
-      await request(app.getHttpServer())
-        .post('/users/signup')
-        .send(createUserDto)
-        .expect(HttpStatus.CREATED);
+      await request(app.getHttpServer()).post('/users/signup').send(createUserDto).expect(HttpStatus.CREATED);
 
       createdUser = await userRepository.findOne({
-        where: { username: createUserDto.username }
+        where: { username: createUserDto.username },
       });
     });
 
@@ -673,7 +649,7 @@ describe('User E2E', () => {
     });
 
     it('201 CREATED - should send password reset email', async () => {
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post(`/users/forgot-password/${createdUser.email}`)
         .expect(HttpStatus.CREATED);
 
@@ -704,20 +680,18 @@ describe('User E2E', () => {
         username: `rptest${uniqueId}`,
         email: `rptest${uniqueId}@example.com`,
         password: 'oldpassword123',
-        lastname: 'ResetPasswordTest'
+        lastname: 'ResetPasswordTest',
       };
 
-      await request(app.getHttpServer())
-        .post('/users/signup')
-        .send(userData)
-        .expect(HttpStatus.CREATED);
+      await request(app.getHttpServer()).post('/users/signup').send(userData).expect(HttpStatus.CREATED);
 
       createdUser = await userRepository.findOne({
-        where: { username: userData.username }
+        where: { username: userData.username },
       });
 
-      const forgotPasswordResponse: request.Response = await request(app.getHttpServer())
-        .post(`/users/forgot-password/${createdUser.email}`);
+      const forgotPasswordResponse: SupertestResponse = await request(app.getHttpServer()).post(
+        `/users/forgot-password/${createdUser.email}`
+      );
       resetToken = forgotPasswordResponse.body.resetPasswordToken;
     });
 
@@ -728,10 +702,10 @@ describe('User E2E', () => {
     it('201 CREATED - should reset password with valid token', async () => {
       const updateNewPasswordDto: UpdateNewPasswordDto = {
         token: resetToken,
-        password: 'newpassword123'
+        password: 'newpassword123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.CREATED);
@@ -744,10 +718,10 @@ describe('User E2E', () => {
 
       const loginUserDto: UserLoginDto = {
         email: createdUser.email,
-        password: 'newpassword123'
+        password: 'newpassword123',
       };
 
-      const loginResponse: request.Response = await request(app.getHttpServer())
+      const loginResponse: SupertestResponse = await request(app.getHttpServer())
         .post('/users/login')
         .send(loginUserDto);
 
@@ -760,10 +734,10 @@ describe('User E2E', () => {
     it('401 UNAUTHORIZED - should reject invalid reset token', async () => {
       const updateNewPasswordDto: UpdateNewPasswordDto = {
         token: 'invalid-token-12345',
-        password: 'newpassword123'
+        password: 'newpassword123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -776,11 +750,11 @@ describe('User E2E', () => {
     });
 
     it('401 UNAUTHORIZED - should reject expired reset token', async () => {
-      const secret: string = configService.get<string>('secret');
+      const secret: string = configService.get<string>('auth.secret');
       const expiredToken: string = jwt.sign(
         {
           email: createdUser.email,
-          username: createdUser.username
+          username: createdUser.username,
         },
         secret,
         { expiresIn: '-1s' }
@@ -788,10 +762,10 @@ describe('User E2E', () => {
 
       const updateNewPasswordDto: UpdateNewPasswordDto = {
         token: expiredToken,
-        password: 'newpassword123'
+        password: 'newpassword123',
       };
 
-      const response: request.Response = await request(app.getHttpServer())
+      const response: SupertestResponse = await request(app.getHttpServer())
         .post('/users/reset-password')
         .send(updateNewPasswordDto)
         .expect(HttpStatus.UNAUTHORIZED);
@@ -818,7 +792,7 @@ describe('User E2E', () => {
         roles: ['user'],
         image: '',
         about: 'Test user for e2e tests',
-        isDeleted: false
+        isDeleted: false,
       });
       await userRepository.save(existingUser);
     }
@@ -829,7 +803,7 @@ describe('User E2E', () => {
       id: id,
       username: 'test',
       email: 'test@maildrop.com',
-      roles: ['admin']
+      roles: ['admin'],
     };
     const secret: string = configService.get<string>('auth.secret');
     return jwt.sign(payload, secret, { expiresIn: '1h' });
@@ -853,11 +827,11 @@ describe('User E2E', () => {
     await userTestService.cleanupAfterTest();
   }
 
-  async function createTestUserEntity(overrides: Partial<CreateUserDto> = {}): Promise<UserEntity> {
+  function createTestUserEntity(overrides: Partial<CreateUserDto> = {}): Promise<UserEntity> {
     const mockUser: CreateUserDto = mockUserFactory({
       username: `testuser${Date.now()}`,
       email: `testuser${Date.now()}@example.com`,
-      ...overrides
+      ...overrides,
     });
 
     const userEntity: UserEntity = new UserEntity({});
@@ -876,7 +850,7 @@ describe('User E2E', () => {
     userEntity.userCreated = new ObjectId(id);
     userEntity.userUpdated = new ObjectId(id);
 
-    return await userRepository.save(userEntity);
+    return userRepository.save(userEntity);
   }
 
   async function postUser(userData: CreateUserDto): Promise<UserEntity> {
@@ -884,37 +858,30 @@ describe('User E2E', () => {
     const uniqueUserData: CreateUserDto = {
       ...userData,
       username: `${userData.username}${timestamp}`,
-      email: userData.email.includes('@') ? userData.email.replace('@', `${timestamp}@`) : `${userData.email}${timestamp}@example.com`
+      email: userData.email.includes('@')
+        ? userData.email.replace('@', `${timestamp}@`)
+        : `${userData.email}${timestamp}@example.com`,
     };
 
-    await request(app.getHttpServer())
-      .post('/users/signup')
-      .send(uniqueUserData)
-      .expect(HttpStatus.CREATED);
+    await request(app.getHttpServer()).post('/users/signup').send(uniqueUserData).expect(HttpStatus.CREATED);
 
     const createdUser: UserEntity = await userRepository.findOne({
-      where: { username: uniqueUserData.username }
+      where: { username: uniqueUserData.username },
     });
     expect(createdUser).toBeDefined();
     return createdUser;
   }
 
   function getUserById(id: string) {
-    return request(app.getHttpServer())
-      .get(`/users/user/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).get(`/users/user/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function getUserByEmail(email: string) {
-    return request(app.getHttpServer())
-      .get(`/users/email/${email}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).get(`/users/email/${email}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function getUserByUsername(username: string) {
-    return request(app.getHttpServer())
-      .get(`/users/username/${username}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).get(`/users/username/${username}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function updateUser(id: string, updateUserDto: UpdateUserDto) {
@@ -925,15 +892,10 @@ describe('User E2E', () => {
   }
 
   function archiveUser(id: string) {
-    return request(app.getHttpServer())
-      .patch(`/users/archive/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).patch(`/users/archive/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function unarchiveUser(id: string) {
-    return request(app.getHttpServer())
-      .patch(`/users/unarchive/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).patch(`/users/unarchive/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
-
 });

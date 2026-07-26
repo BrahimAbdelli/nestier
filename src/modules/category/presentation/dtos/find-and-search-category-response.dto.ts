@@ -16,7 +16,6 @@ export class FindAndSearchCategoryResponseDto extends BaseDto {
   @AutoMap()
   public name?: string;
 
-
   @ApiProperty({ description: 'Filter high volume categories', required: false })
   @IsOptional()
   @IsBoolean()

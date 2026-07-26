@@ -28,7 +28,6 @@ export class Product extends Base {
 
   // Business rules for product
   public applyBusinessRules(restrictedWords: string[] = []): void {
-
     if (this.name.length > 100) {
       throw new ApplicationException(ProductErrors.PRODUCT_NAME_TOO_LONG(this.name));
     }

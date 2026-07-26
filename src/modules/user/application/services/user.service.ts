@@ -2,7 +2,10 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SendPasswordResetEmailUseCase, SendPasswordResetEmailRequest } from '../use-cases/send-password-reset-email.use-case';
+import {
+  SendPasswordResetEmailUseCase,
+  SendPasswordResetEmailRequest,
+} from '../use-cases/send-password-reset-email.use-case';
 import { ApplicationException } from '@shared/common/error-handling/domain/exceptions/application.exception';
 import { Logger } from '@shared/common/logger/logger.service';
 import { findByField } from '@shared/common/utils/find-by-field.utils';
@@ -24,7 +27,7 @@ import { UserEntity } from '../../infrastructure/entities/user.entity';
 import { UserResetPasswordRequestContextService } from './user-reset-password-request-context.service';
 
 @Injectable({ scope: Scope.REQUEST })
-export class UserService extends BaseService<UserEntity, User> {
+export class UserService extends BaseService<User> {
   private readonly authConfig: ConfigAuthModel;
 
   constructor(
@@ -34,7 +37,7 @@ export class UserService extends BaseService<UserEntity, User> {
     private readonly configService: ConfigService,
     private readonly sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase,
     private readonly userResetPasswordRequestContextService: UserResetPasswordRequestContextService,
-    logger: Logger,
+    logger: Logger
   ) {
     super(userRepository, request, logger);
     this.authConfig = configService.get<ConfigAuthModel>('auth');
@@ -120,9 +123,8 @@ export class UserService extends BaseService<UserEntity, User> {
     }
   }
 
-
   public async archive(id: ObjectId): Promise<void> {
-    const user: User = await this.userRepository.findOneById(id);
+    const user: User = await this.userRepository.findOneById(id.toHexString());
     if (!user) {
       this.logger.error('User not found', { id });
       throw new ApplicationException(UserErrors.USER_NOT_FOUND(id.toString()));
@@ -137,7 +139,7 @@ export class UserService extends BaseService<UserEntity, User> {
   }
 
   public async unarchive(id: ObjectId): Promise<void> {
-    const user: User = await this.userRepository.findOneById(id);
+    const user: User = await this.userRepository.findOneById(id.toHexString());
     if (!user) {
       this.logger.error('User not found', { id });
       throw new ApplicationException(UserErrors.USER_NOT_FOUND(id.toString()));
@@ -205,7 +207,9 @@ export class UserService extends BaseService<UserEntity, User> {
   }
 
   private async sendPasswordResetEmail(user: User): Promise<void> {
-    const context: UserResetPasswordRequestContext = this.userResetPasswordRequestContextService.getRequestContext(user.resetPasswordToken);
+    const context: UserResetPasswordRequestContext = this.userResetPasswordRequestContextService.getRequestContext(
+      user.resetPasswordToken
+    );
 
     const request: SendPasswordResetEmailRequest = SendPasswordResetEmailRequest.create()
       .withUser(user)

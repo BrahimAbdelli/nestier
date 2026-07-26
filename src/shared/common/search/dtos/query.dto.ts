@@ -10,7 +10,7 @@ import {
   IsNotEmpty,
   IsObject,
   IsOptional,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { EntityFieldsNames } from '../../types/entity-fields-names.type';
 import { AttributeDto } from './attribute.dto';

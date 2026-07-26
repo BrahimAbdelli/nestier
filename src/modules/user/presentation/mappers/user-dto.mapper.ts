@@ -9,11 +9,26 @@ import { BaseDtoMapperInterface } from '../../../base/presentation/dtos/base-dto
 import { User } from '../../domain/value-objects/user';
 import { UserLogin } from '../../domain/value-objects/user-login';
 import { UserUpdatePassword } from '../../domain/value-objects/user-update-password';
-import { CreateUserDto, FindAndSearchUserResponseDto, UpdateNewPasswordDto, UpdateUserDto, UserDto, UserLoginDto, UserLoginResponseDto, UserResponseDto } from '../dtos';
+import {
+  CreateUserDto,
+  FindAndSearchUserResponseDto,
+  UpdateNewPasswordDto,
+  UpdateUserDto,
+  UserDto,
+  UserLoginDto,
+  UserLoginResponseDto,
+  UserResponseDto,
+} from '../dtos';
 import { AttributeDto } from '@shared/common/search';
 
 @Injectable()
-export class UserDtoMapper extends BaseDtoMapperInterface<User, UserDto, CreateUserDto, UpdateUserDto, FindAndSearchUserResponseDto> {
+export class UserDtoMapper extends BaseDtoMapperInterface<
+  User,
+  UserDto,
+  CreateUserDto,
+  UpdateUserDto,
+  FindAndSearchUserResponseDto
+> {
   constructor(@InjectMapper() private readonly classMapper: Mapper) {
     super();
   }
@@ -75,7 +90,7 @@ export class UserDtoMapper extends BaseDtoMapperInterface<User, UserDto, CreateU
   public domainToResponsePaginateDto(source: ResponsePaginate<User>): ResponsePaginate<UserDto> {
     return {
       data: this.domainsToDtos(source.data),
-      count: source.count
+      count: source.count,
     };
   }
 

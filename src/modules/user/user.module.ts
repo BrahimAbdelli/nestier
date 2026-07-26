@@ -55,8 +55,8 @@ import { UserDtoMapperProfile } from './presentation/mappers/user-dto.mapper.pro
       useFactory: (
         repo: Repository<UserEntity>,
         mapper: BaseEntityMapperInterface<UserEntity, User>,
-        logger: Logger,
-      ): BaseRepository<UserEntity, User> => {
+        logger: Logger
+      ): BaseRepository<User> => {
         return new TypeOrmBaseRepository<UserEntity, User>(repo, mapper, logger);
       },
     },
@@ -66,7 +66,7 @@ import { UserDtoMapperProfile } from './presentation/mappers/user-dto.mapper.pro
       useFactory: (
         repo: Repository<UserEntity>,
         mapper: BaseEntityMapperInterface<UserEntity, User>,
-        logger: Logger,
+        logger: Logger
       ): UserRepository => {
         return new TypeOrmUserRepository(repo, mapper, logger);
       },

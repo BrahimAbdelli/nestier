@@ -7,10 +7,10 @@
   
   <p>
     <a href="https://github.com/BrahimAbdelli/nestier/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
-    <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg" alt="Node"></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-5.9-blue.svg" alt="TypeScript"></a>
-    <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/nestjs-11.1.12-red.svg" alt="NestJS"></a>
-    <img src="https://img.shields.io/badge/version-2.0.1-orange.svg" alt="Version">
+    <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg" alt="Node"></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-6.x-blue.svg" alt="TypeScript"></a>
+    <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/nestjs-11.1.28-red.svg" alt="NestJS"></a>
+    <img src="https://img.shields.io/badge/version-2.0.3-orange.svg" alt="Version">
   </p>
 </div>
 
@@ -63,11 +63,11 @@ The project follows a strict **hexagonal architecture** (also known as ports & a
 The base module provides reusable generic components that other modules can extend:
 
 ```
-BaseController<T>     →  CRUD endpoints + search + pagination
-BaseService<T>        →  Business logic for all CRUD operations
-BaseRepository<T>     →  Abstract repository interface (port)
+BaseController        →  CRUD endpoints + search + pagination (DTO in/out)
+BaseService<D>        →  Application orchestration against domain ports
+BaseRepository<D>     →  Abstract repository interface (port, no TypeORM types)
 TypeOrmBaseRepository →  Concrete TypeORM implementation (adapter)
-BaseEntity            →  Common entity fields (id, timestamps)
+BaseEntity            →  TypeORM persistence model (infrastructure only)
 ```
 
 ## Project Structure
@@ -84,10 +84,11 @@ src/
 │   │   │   ├── ports/           # Service & controller interfaces
 │   │   │   └── services/        # BaseService<T> implementation
 │   │   ├── domain/
-│   │   │   ├── entities/        # BaseEntity
-│   │   │   ├── repositories/    # BaseRepository interface (port)
+│   │   │   ├── ports/           # FindAndCountCriteria (persistence-agnostic)
+│   │   │   ├── repositories/    # BaseRepository<D> interface (port)
 │   │   │   └── value-objects/   # Base domain model
 │   │   ├── infrastructure/
+│   │   │   ├── persistence/typeorm/  # BaseEntity (TypeORM)
 │   │   │   └── adapters/        # TypeOrmBaseRepository (adapter)
 │   │   ├── presentation/
 │   │   │   ├── controllers/     # BaseController factory function
@@ -351,9 +352,9 @@ docker-compose up -d --build
 
 | Category | Technology |
 |----------|------------|
-| **Framework** | NestJS 10.3.8 |
-| **Language** | TypeScript 5.9 |
-| **Database** | MongoDB 6.x |
+| **Framework** | NestJS 11.1.x |
+| **Language** | TypeScript 6.x |
+| **Database** | MongoDB 7.x |
 | **ORM** | TypeORM 0.3.x |
 | **Authentication** | JWT (jsonwebtoken) |
 | **Validation** | class-validator, class-transformer |

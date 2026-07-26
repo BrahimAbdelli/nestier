@@ -32,8 +32,8 @@ import { CategoryDtoMapperProfile } from './presentation/mappers/category-dto.ma
       useFactory: (
         repo: Repository<CategoryEntity>,
         mapper: BaseEntityMapperInterface<CategoryEntity, Category>,
-        logger: Logger,
-      ): BaseRepository<CategoryEntity, Category> => {
+        logger: Logger
+      ): BaseRepository<Category> => {
         return new TypeOrmBaseRepository<CategoryEntity, Category>(repo, mapper, logger);
       },
     },

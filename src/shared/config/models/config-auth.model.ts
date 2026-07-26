@@ -21,4 +21,3 @@ export class ConfigAuthModel {
   @IsString()
   supportEmail: string;
 }
-

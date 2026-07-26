@@ -9,7 +9,10 @@ import { Product } from '../../../domain/value-objects/product';
 import { ProductEntity } from '../../entities/product.entity';
 
 @Injectable()
-export class TypeOrmProductRepository extends TypeOrmBaseRepository<ProductEntity, Product> implements ProductRepositoryInterface {
+export class TypeOrmProductRepository
+  extends TypeOrmBaseRepository<ProductEntity, Product>
+  implements ProductRepositoryInterface
+{
   constructor(
     @InjectRepository(ProductEntity)
     repository: Repository<ProductEntity>,
@@ -23,8 +26,8 @@ export class TypeOrmProductRepository extends TypeOrmBaseRepository<ProductEntit
     const productEntities: ProductEntity[] = await this.repository.find({
       where: {
         price: { $gt: threshold } as unknown as FindOperator<number>,
-        isDeleted: false
-      }
+        isDeleted: false,
+      },
     });
     return this.baseEntityMapper.persistencesToDomains(productEntities);
   }
@@ -33,8 +36,8 @@ export class TypeOrmProductRepository extends TypeOrmBaseRepository<ProductEntit
     const productEntities: ProductEntity[] = await this.repository.find({
       where: {
         name: { $regex: name, $options: 'i' } as unknown as FindOperator<string>,
-        isDeleted: false
-      }
+        isDeleted: false,
+      },
     });
     return this.baseEntityMapper.persistencesToDomains(productEntities);
   }

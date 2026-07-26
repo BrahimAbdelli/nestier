@@ -43,4 +43,3 @@ export class UserDto extends BaseDto {
   @AutoMap()
   public lastUpdateAt: Date;
 }
-

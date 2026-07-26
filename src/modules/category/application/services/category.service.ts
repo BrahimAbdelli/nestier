@@ -5,14 +5,13 @@ import { IGetUserAuthInfoRequest } from '../../../../modules/user/domain/value-o
 import { BaseService } from '../../../base/application/services/base.service';
 import { BaseRepository } from '../../../base/domain/repositories/base.repository';
 import { Category } from '../../domain/value-objects/category';
-import { CategoryEntity } from '../../infrastructure/entities/category.entity';
 
 @Injectable()
-export class CategoryService extends BaseService<CategoryEntity, Category> {
+export class CategoryService extends BaseService<Category> {
   constructor(
-    @Inject(BaseRepository) baseRepository: BaseRepository<CategoryEntity, Category>,
+    @Inject(BaseRepository) baseRepository: BaseRepository<Category>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
-    logger: Logger,
+    logger: Logger
   ) {
     super(baseRepository, request, logger);
   }
@@ -28,12 +27,12 @@ export class CategoryService extends BaseService<CategoryEntity, Category> {
   }
 
   // Enhanced update method with business logic
-  public async update(domain: Category): Promise<Category> {
+  public update(domain: Category): Promise<Category> {
     // Apply domain validation and business rules
     domain.validate();
     domain.applyBusinessRules();
 
     // Use the inherited update method from BaseService
-    return await super.update(domain);
+    return super.update(domain);
   }
 }

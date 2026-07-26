@@ -13,4 +13,3 @@ export interface DatabaseTestInterface {
   batchInsert(collectionName: string, data: any[], batchSize?: number): Promise<void>;
   batchDelete(collectionName: string, criteria: any, batchSize?: number): Promise<void>;
 }
-

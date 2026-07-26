@@ -1,9 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  ValidateNested
-} from 'class-validator';
+import { IsEnum, ValidateNested } from 'class-validator';
 import { EntityFieldsNames } from '../../types/entity-fields-names.type';
 import { ComparisonTypeEnum } from '../enums/comparison.enum';
 import { OrderEnum } from '../enums/order.enum';

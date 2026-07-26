@@ -7,7 +7,10 @@ import { Logger } from '@shared/common/logger/logger.service';
 export class DatabaseTestService implements DatabaseTestInterface {
   private collectionBackups: Map<string, any[]> = new Map();
 
-  constructor(private readonly dataSource: DataSource, private readonly logger: Logger) { }
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly logger: Logger
+  ) {}
 
   async clearCollection(collectionName: string): Promise<void> {
     try {
@@ -108,7 +111,7 @@ export class DatabaseTestService implements DatabaseTestInterface {
     try {
       const repository: Repository<ObjectLiteral> = this.dataSource.getRepository(collectionName);
       const records: ObjectLiteral[] = await repository.find({ where: criteria, select: ['id'] });
-      const ids: any[] = records.map(r => r.id);
+      const ids: any[] = records.map((r) => r.id);
 
       for (let i = 0; i < ids.length; i += batchSize) {
         const batchIds = ids.slice(i, i + batchSize);
@@ -124,4 +127,3 @@ export class DatabaseTestService implements DatabaseTestInterface {
     }
   }
 }
-

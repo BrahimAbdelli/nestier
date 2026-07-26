@@ -10,7 +10,7 @@ import { GenericEmailData } from '@shared/common/email/domain/value-objects/gene
 export class MockEmailService implements EmailSenderInterface {
   private readonly sentEmails: GenericEmailData[] = [];
 
-  public async sendEmail(emailData: GenericEmailData): Promise<void> {
+  public sendEmail(emailData: GenericEmailData): Promise<void> {
     // Store the email for potential assertions in tests
     this.sentEmails.push(emailData);
     // Do nothing - mock implementation

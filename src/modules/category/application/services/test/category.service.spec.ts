@@ -4,13 +4,12 @@ import { ObjectId } from 'mongodb';
 import { IGetUserAuthInfoRequest } from '../../../../user/domain/value-objects/user-request.interface';
 import { CategoryService } from '../category.service';
 import { BaseRepository } from '../../../../base/domain/repositories/base.repository';
-import { CategoryEntity } from '../../../infrastructure/entities/category.entity';
 import { Category } from '../../../domain/value-objects/category';
 import { Logger } from '@shared/common/logger/logger.service';
 
 describe('CategoryService', () => {
   let service: CategoryService;
-  let mockRepository: jest.Mocked<BaseRepository<CategoryEntity, Category>>;
+  let mockRepository: jest.Mocked<BaseRepository<Category>>;
   let mockLogger: jest.Mocked<Logger>;
   let mockRequest: IGetUserAuthInfoRequest;
 
@@ -35,7 +34,7 @@ describe('CategoryService', () => {
       save: jest.fn(),
       delete: jest.fn(),
       clear: jest.fn(),
-    } as jest.Mocked<BaseRepository<CategoryEntity, Category>>;
+    } as jest.Mocked<BaseRepository<Category>>;
 
     mockLogger = {
       log: jest.fn(),
@@ -124,9 +123,9 @@ describe('CategoryService', () => {
       mockRepository.findOneById.mockResolvedValue(testCategory);
       mockRepository.delete.mockResolvedValue();
 
-      await service.delete(testId);
+      await service.delete(testId.toHexString());
 
-      expect(mockRepository.delete).toHaveBeenCalledWith(testId);
+      expect(mockRepository.delete).toHaveBeenCalledWith(testId.toHexString());
     });
   });
 });

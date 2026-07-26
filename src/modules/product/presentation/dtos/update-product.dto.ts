@@ -8,7 +8,7 @@ export class UpdateProductDto extends BaseDto {
     description: 'Product name',
     example: 'iPhone 15 Pro',
     minLength: 2,
-    maxLength: 100
+    maxLength: 100,
   })
   @IsNotEmpty({ message: 'Product name is required' })
   @IsString({ message: 'Product name must be a string' })
@@ -19,7 +19,7 @@ export class UpdateProductDto extends BaseDto {
     description: 'Product price in USD',
     example: 999.99,
     minimum: 0,
-    maximum: 100000
+    maximum: 100000,
   })
   @IsNotEmpty({ message: 'Product price is required' })
   @IsNumber({}, { message: 'Product price must be a number' })
@@ -31,7 +31,7 @@ export class UpdateProductDto extends BaseDto {
     example: 'Latest iPhone with advanced features',
     required: false,
     minLength: 3,
-    maxLength: 3000
+    maxLength: 3000,
   })
   @IsString({ message: 'Product description must be a string' })
   @IsOptional()

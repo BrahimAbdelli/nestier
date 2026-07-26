@@ -5,7 +5,10 @@ import { ApplicationError } from '../application-error.interface';
 describe('BaseErrors', () => {
   describe('INTERNAL_SERVER_ERROR', () => {
     it('500 INTERNAL_SERVER_ERROR - should create error with correct structure', () => {
-      const errorInternalServer: ApplicationError = BaseErrors.INTERNAL_SERVER_ERROR('UserService', 'Database connection failed');
+      const errorInternalServer: ApplicationError = BaseErrors.INTERNAL_SERVER_ERROR(
+        'UserService',
+        'Database connection failed'
+      );
 
       expect(errorInternalServer.code).toBe('INTERNAL_SERVER_ERROR');
       expect(errorInternalServer.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -21,7 +24,10 @@ describe('BaseErrors', () => {
     });
 
     it('should handle special characters in service name and details', () => {
-      const errorInternalServer: ApplicationError = BaseErrors.INTERNAL_SERVER_ERROR('Service-123', 'Error: Connection "failed"');
+      const errorInternalServer: ApplicationError = BaseErrors.INTERNAL_SERVER_ERROR(
+        'Service-123',
+        'Error: Connection "failed"'
+      );
 
       expect(errorInternalServer.message).toContain('Service-123');
       expect(errorInternalServer.message).toContain('Error: Connection "failed"');
@@ -30,7 +36,10 @@ describe('BaseErrors', () => {
 
   describe('EXTERNAL_SERVICE_ERROR', () => {
     it('502 EXTERNAL_SERVICE_ERROR - should create error with correct structure', () => {
-      const errorExternalService: ApplicationError = BaseErrors.EXTERNAL_SERVICE_ERROR('PaymentAPI', 'Connection timeout');
+      const errorExternalService: ApplicationError = BaseErrors.EXTERNAL_SERVICE_ERROR(
+        'PaymentAPI',
+        'Connection timeout'
+      );
 
       expect(errorExternalService.code).toBe('EXTERNAL_SERVICE_ERROR');
       expect(errorExternalService.status).toBe(HttpStatus.BAD_GATEWAY);
@@ -54,7 +63,10 @@ describe('BaseErrors', () => {
 
   describe('OPERATION_NOT_ALLOWED', () => {
     it('403 OPERATION_NOT_ALLOWED - should create error with correct structure', () => {
-      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED('DELETE', 'User is not admin');
+      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED(
+        'DELETE',
+        'User is not admin'
+      );
 
       expect(errorOperationNotAllowed.code).toBe('OPERATION_NOT_ALLOWED');
       expect(errorOperationNotAllowed.status).toBe(HttpStatus.FORBIDDEN);
@@ -62,7 +74,10 @@ describe('BaseErrors', () => {
     });
 
     it('should include operation and reason in metadata', () => {
-      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED('UPDATE', 'Resource is locked');
+      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED(
+        'UPDATE',
+        'Resource is locked'
+      );
       const metadata = JSON.parse(errorOperationNotAllowed.metadata as string);
 
       expect(metadata.operation).toBe('UPDATE');
@@ -71,7 +86,11 @@ describe('BaseErrors', () => {
 
     it('should include additional context when provided', () => {
       const context: Record<string, unknown> = { userId: '123', role: 'user' };
-      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED('CREATE', 'Insufficient permissions', context);
+      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED(
+        'CREATE',
+        'Insufficient permissions',
+        context
+      );
       const metadata = JSON.parse(errorOperationNotAllowed.metadata as string);
 
       expect(metadata.operation).toBe('CREATE');
@@ -81,7 +100,10 @@ describe('BaseErrors', () => {
     });
 
     it('should work without context parameter', () => {
-      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED('ARCHIVE', 'Already archived');
+      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED(
+        'ARCHIVE',
+        'Already archived'
+      );
       const metadata = JSON.parse(errorOperationNotAllowed.metadata as string);
 
       expect(metadata.operation).toBe('ARCHIVE');
@@ -92,9 +114,13 @@ describe('BaseErrors', () => {
     it('should handle complex context objects', () => {
       const context: Record<string, unknown> = {
         user: { id: '123', name: 'John' },
-        resource: { type: 'document', id: '456' }
+        resource: { type: 'document', id: '456' },
       };
-      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED('SHARE', 'Private resource', context);
+      const errorOperationNotAllowed: ApplicationError = BaseErrors.OPERATION_NOT_ALLOWED(
+        'SHARE',
+        'Private resource',
+        context
+      );
       const metadata = JSON.parse(errorOperationNotAllowed.metadata as string);
 
       expect(metadata.user).toEqual({ id: '123', name: 'John' });

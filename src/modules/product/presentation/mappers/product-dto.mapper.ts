@@ -11,7 +11,13 @@ import { CreateProductDto, FindAndSearchProductResponseDto, ProductDto, UpdatePr
 import { AttributeDto } from '@shared/common/search';
 
 @Injectable()
-export class ProductDtoMapper extends BaseDtoMapperInterface<Product, ProductDto, CreateProductDto, UpdateProductDto, FindAndSearchProductResponseDto> {
+export class ProductDtoMapper extends BaseDtoMapperInterface<
+  Product,
+  ProductDto,
+  CreateProductDto,
+  UpdateProductDto,
+  FindAndSearchProductResponseDto
+> {
   constructor(@InjectMapper() private readonly classMapper: Mapper) {
     super();
   }
@@ -73,7 +79,7 @@ export class ProductDtoMapper extends BaseDtoMapperInterface<Product, ProductDto
   public domainToResponsePaginateDto(source: ResponsePaginate<Product>): ResponsePaginate<ProductDto> {
     return {
       data: this.domainsToDtos(source.data),
-      count: source.count
+      count: source.count,
     };
   }
 }

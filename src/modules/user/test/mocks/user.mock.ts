@@ -22,7 +22,10 @@ export function mockUserFactory(newUser: DeepPartial<CreateUserDto> = new Create
   return Object.assign(user, newUser);
 }
 
-export function mockUserArrayFactory(count: number, overrides: DeepPartial<CreateUserDto> = new CreateUserDto()): CreateUserDto[] {
+export function mockUserArrayFactory(
+  count: number,
+  overrides: DeepPartial<CreateUserDto> = new CreateUserDto()
+): CreateUserDto[] {
   return Array.from({ length: count }, () => mockUserFactory(overrides));
 }
 
@@ -30,7 +33,7 @@ export function mockAdminUserFactory(overrides: DeepPartial<CreateUserDto> = new
   return mockUserFactory({
     roles: ['admin'],
     username: faker.internet.username() + '_admin',
-    ...overrides
+    ...overrides,
   });
 }
 
@@ -38,17 +41,19 @@ export function mockRegularUserFactory(overrides: DeepPartial<CreateUserDto> = n
   return mockUserFactory({
     roles: ['user'],
     username: faker.internet.username() + '_user',
-    ...overrides
+    ...overrides,
   });
 }
 
-export function mockUserWithMinimalDataFactory(overrides: DeepPartial<CreateUserDto> = new CreateUserDto()): CreateUserDto {
+export function mockUserWithMinimalDataFactory(
+  overrides: DeepPartial<CreateUserDto> = new CreateUserDto()
+): CreateUserDto {
   return mockUserFactory({
     address: undefined,
     phone: undefined,
     image: undefined,
     about: undefined,
-    ...overrides
+    ...overrides,
   });
 }
 
@@ -63,6 +68,6 @@ export function mockUserSearchCriteriaFactory(
     skip: 0,
     orders: {},
     enumValidation: null,
-    ...overrides
+    ...overrides,
   };
 }

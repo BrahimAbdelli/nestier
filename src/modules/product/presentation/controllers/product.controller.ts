@@ -1,5 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BaseController } from '../../../base/presentation/controllers/base.controller';
 import { BaseDtoMapperInterface } from '../../../base/presentation/dtos/base-dto-mapper.interface';
 import { ProductService } from '../../application/services/product.service';
@@ -12,13 +19,22 @@ import { ProductDto } from '../dtos/product.dto';
 @ApiTags('products')
 @ApiNotFoundResponse({ description: 'Product not found' })
 @ApiBadRequestResponse({ description: 'Invalid request data' })
-export class ProductController extends BaseController<Product, ProductDto, CreateProductDto, UpdateProductDto, FindAndSearchProductResponseDto>(
+export class ProductController extends BaseController<
+  Product,
+  ProductDto,
   CreateProductDto,
   UpdateProductDto,
-) {
+  FindAndSearchProductResponseDto
+>(CreateProductDto, UpdateProductDto) {
   constructor(
     private readonly productService: ProductService,
-    private readonly productDtoMapper: BaseDtoMapperInterface<Product, ProductDto, CreateProductDto, UpdateProductDto, FindAndSearchProductResponseDto>
+    private readonly productDtoMapper: BaseDtoMapperInterface<
+      Product,
+      ProductDto,
+      CreateProductDto,
+      UpdateProductDto,
+      FindAndSearchProductResponseDto
+    >
   ) {
     super(productService, productDtoMapper);
   }

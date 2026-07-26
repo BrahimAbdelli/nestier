@@ -15,7 +15,7 @@ export class UniqueConstraint implements ValidatorConstraintInterface {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly dataSource: DataSource
-  ) { }
+  ) {}
   async validate(value: any, args: any): Promise<boolean> {
     const [entityClass, property] = args.constraints;
     await isFieldUnique(this.userRepository, { username: args.object.username });

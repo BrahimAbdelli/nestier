@@ -1,7 +1,7 @@
-import { Mapper } from "@automapper/core";
-import { InjectMapper } from "@automapper/nestjs";
-import { BaseEntity } from "../../../domain/entities/base.entity";
-import { Base } from "../../../domain/value-objects/base";
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
+import { Base } from '../../../domain/value-objects/base';
+import { BaseEntity } from '../../persistence/typeorm/base.entity';
 
 export abstract class BaseEntityMapperInterface<E extends BaseEntity, D extends Base> {
   public abstract domainToPersistence(source: D): E;
@@ -11,11 +11,7 @@ export abstract class BaseEntityMapperInterface<E extends BaseEntity, D extends 
 }
 
 export class BaseEntityMapper implements BaseEntityMapperInterface<BaseEntity, Base> {
-
-  constructor(
-    @InjectMapper() protected readonly classMapper: Mapper,
-  ) { }
-
+  constructor(@InjectMapper() protected readonly classMapper: Mapper) {}
 
   public domainToPersistence(source: Base): BaseEntity {
     return null;

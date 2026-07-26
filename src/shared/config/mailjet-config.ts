@@ -1,4 +1,4 @@
-import { ConfigMailjetModel } from "./models/config-mailjet.model";
+import { ConfigMailjetModel } from './models/config-mailjet.model';
 
 export function mailJetConfig(): ConfigMailjetModel {
   return {

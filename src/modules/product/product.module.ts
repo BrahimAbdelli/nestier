@@ -38,8 +38,8 @@ import { ProductDtoMapperProfile } from './presentation/mappers/product-dto.mapp
       useFactory: (
         repo: Repository<ProductEntity>,
         mapper: BaseEntityMapperInterface<ProductEntity, Product>,
-        logger: Logger,
-      ): BaseRepository<ProductEntity, Product> => {
+        logger: Logger
+      ): BaseRepository<Product> => {
         return new TypeOrmBaseRepository<ProductEntity, Product>(repo, mapper, logger);
       },
     },
@@ -49,7 +49,7 @@ import { ProductDtoMapperProfile } from './presentation/mappers/product-dto.mapp
       useFactory: (
         repo: Repository<ProductEntity>,
         mapper: BaseEntityMapperInterface<ProductEntity, Product>,
-        logger: Logger,
+        logger: Logger
       ): ProductRepository => {
         return new TypeOrmProductRepository(repo, mapper, logger);
       },

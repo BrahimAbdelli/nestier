@@ -62,7 +62,6 @@ export class User extends Base {
 
   // Business rules for user
   public applyBusinessRules(): void {
-
     // Rule 1: Username length validation
     if (this.username.length < 3 || this.username.length > 30) {
       throw new ApplicationException(UserErrors.USER_USERNAME_INVALID_LENGTH(this.username));

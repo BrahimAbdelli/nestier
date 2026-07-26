@@ -7,4 +7,3 @@ export class UserLoginResponseDto extends UserResponseDto {
   @AutoMap()
   public token: string;
 }
-

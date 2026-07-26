@@ -70,9 +70,7 @@ export class Logger implements LoggerService, LoggerInterface, TypeORM.Logger {
     }
 
     const formattedSql: string = this.formatQueryWithParameters(query, parameters);
-    this.logger.warn(
-      `This request : ${formattedSql} was detected as slow, execution time : ${executionTime}`
-    );
+    this.logger.warn(`This request : ${formattedSql} was detected as slow, execution time : ${executionTime}`);
   }
 
   public logSchemaBuild(message: string): void {

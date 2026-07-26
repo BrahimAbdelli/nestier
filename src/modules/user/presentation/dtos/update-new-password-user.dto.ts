@@ -16,4 +16,3 @@ export class UpdateNewPasswordDto {
   @AutoMap()
   public password: string;
 }
-

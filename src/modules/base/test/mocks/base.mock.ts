@@ -1,6 +1,6 @@
-import { QueryDto } from "@shared/common/search/dtos/query.dto";
-import { ComparisonTypeEnum } from "@shared/common/search/enums/comparison.enum";
-import { ComparatorEnum } from "@shared/common/search/enums/comparator.enum";
+import { QueryDto } from '@shared/common/search/dtos/query.dto';
+import { ComparisonTypeEnum } from '@shared/common/search/enums/comparison.enum';
+import { ComparatorEnum } from '@shared/common/search/enums/comparator.enum';
 
 export function mockQueryDtoFactory<T>(newQueryDto: Partial<QueryDto<T>> = new QueryDto<T>()): QueryDto<T> {
   const queryDto: QueryDto<T> = new QueryDto<T>();

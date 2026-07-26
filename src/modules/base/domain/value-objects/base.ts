@@ -1,7 +1,7 @@
-import { AutoMap } from "@automapper/classes";
-import { transformEntity } from "@shared/common/utils/transform-entity.utlis";
-import { Transform } from "class-transformer";
-import { ObjectId } from "mongodb";
+import { AutoMap } from '@automapper/classes';
+import { transformEntity } from '@shared/common/utils/transform-entity.utlis';
+import { Transform } from 'class-transformer';
+import { ObjectId } from 'mongodb';
 
 export abstract class Base {
   @Transform(transformEntity)

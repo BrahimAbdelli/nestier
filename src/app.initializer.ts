@@ -16,14 +16,15 @@ export class AppInitializer {
     configService: ConfigService;
     logger: Logger;
   } {
-
     const configService: ConfigService = app.get(ConfigService);
     const logger: Logger = app.get(Logger);
     app.setGlobalPrefix('api');
 
     const options: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
       .setTitle('Nestier')
-      .setDescription('This is a project aimed to be a nestjs boilerplate using hexagonal architecture and generic repository pattern')
+      .setDescription(
+        'This is a project aimed to be a nestjs boilerplate using hexagonal architecture and generic repository pattern'
+      )
       .setVersion('2.0.1')
       .build();
     const document: OpenAPIObject = SwaggerModule.createDocument(app, options);

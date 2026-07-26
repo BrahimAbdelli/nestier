@@ -4,43 +4,40 @@ import { PaginationConstants } from '@shared/common/constants';
 import { EntityNotFoundDomainException } from '@shared/common/error-handling/domain/exceptions/entity-not-found.exception';
 import { CollectionNotFoundException } from '@shared/common/error-handling/infrastructure/exceptions';
 import { Logger } from '@shared/common/logger/logger.service';
+import { Attribute } from '@shared/common/search';
 import { Query } from '@shared/common/search/domains/query';
 import { SearchResponse } from '@shared/common/search/domains/search-response';
-import { ComparisonTypeEnum } from '@shared/common/search/enums/comparison.enum';
-import { ComparatorEnum } from '@shared/common/search/enums/comparator.enum';
 import { ResponsePaginate } from '@shared/common/types/response-paginate.type';
 import { ObjectId } from 'mongodb';
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 import { IGetUserAuthInfoRequest } from '../../../../modules/user/domain/value-objects/user-request.interface';
 import { BaseServiceInterface } from '../../application/ports/base-service.interface';
-import { BaseEntity } from '../../domain/entities/base.entity';
+import { FindAndCountCriteria } from '../../domain/ports/find-and-count.criteria';
 import { BaseRepository } from '../../domain/repositories/base.repository';
 import { Base } from '../../domain/value-objects/base';
 
 @Injectable()
-export class BaseService<E extends BaseEntity, D extends Base>
-  implements BaseServiceInterface<D> {
+export class BaseService<D extends Base> implements BaseServiceInterface<D> {
   constructor(
-    @Inject(BaseRepository) private readonly baseRepository: BaseRepository<E, D>,
+    @Inject(BaseRepository) private readonly baseRepository: BaseRepository<D>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
-    protected readonly logger: Logger,
-  ) { }
+    protected readonly logger: Logger
+  ) {}
 
   public findAll(): Promise<D[]> {
     return this.baseRepository.findAll();
   }
 
-  public async findOneById(_id: ObjectId): Promise<D> {
-    const entity: D = await this.baseRepository.findOneById(_id);
+  public async findOneById(id: string): Promise<D> {
+    const entity: D = await this.baseRepository.findOneById(this.toIdString(id));
     if (!entity) {
-      this.logger.error('Entity not found', { _id });
+      this.logger.error('Entity not found', { _id: id });
       throw new EntityNotFoundDomainException();
     }
     return entity;
   }
 
-  public async findAndCount(options: FindManyOptions<E>): Promise<ResponsePaginate<D>> {
-    const [result, total] = await this.baseRepository.findAndCount(options);
+  public async findAndCount(criteria: FindAndCountCriteria): Promise<ResponsePaginate<D>> {
+    const [result, total] = await this.baseRepository.findAndCount(criteria);
     return {
       data: result,
       count: total,
@@ -57,7 +54,8 @@ export class BaseService<E extends BaseEntity, D extends Base>
   }
 
   public async update(domain: D): Promise<D> {
-    const existingDomain: D = await this.baseRepository.findOneById(domain._id);
+    const id: string = this.toIdString(domain._id);
+    const existingDomain: D = await this.baseRepository.findOneById(id);
     if (!existingDomain) {
       this.logger.error('Entity not found', { _id: domain._id });
       throw new EntityNotFoundDomainException();
@@ -68,23 +66,24 @@ export class BaseService<E extends BaseEntity, D extends Base>
     }
 
     const updatedEntity: D = { ...existingDomain, ...domain, _id: domain._id };
-    const result: D = await this.baseRepository.save(updatedEntity);
-    return result;
+    return this.baseRepository.save(updatedEntity);
   }
 
-  public async delete(_id: ObjectId): Promise<void> {
-    const entity: D = await this.baseRepository.findOneById(_id);
+  public async delete(id: string): Promise<void> {
+    const idString: string = this.toIdString(id);
+    const entity: D = await this.baseRepository.findOneById(idString);
     if (!entity) {
-      this.logger.error('Entity not found', { _id });
+      this.logger.error('Entity not found', { _id: id });
       throw new EntityNotFoundDomainException();
     }
-    await this.baseRepository.delete(_id);
+    await this.baseRepository.delete(idString);
   }
 
-  public async softDelete(_id: ObjectId, isDeleted: boolean): Promise<void> {
-    const existingEntity: D = await this.baseRepository.findOneById(_id);
+  public async softDelete(id: string, isDeleted: boolean): Promise<void> {
+    const idString: string = this.toIdString(id);
+    const existingEntity: D = await this.baseRepository.findOneById(idString);
     if (!existingEntity) {
-      this.logger.error('Entity not found', { _id });
+      this.logger.error('Entity not found', { _id: id });
       throw new EntityNotFoundDomainException();
     }
 
@@ -104,42 +103,38 @@ export class BaseService<E extends BaseEntity, D extends Base>
         this.logger.logQueryError('Collection does not exist. Unable to clear.', error.message);
         return;
       }
-      const errorMessage: string = error instanceof Error
-        ? error.message
-        : JSON.stringify(error);
+      const errorMessage: string = error instanceof Error ? error.message : JSON.stringify(error);
       this.logger.logQueryError('An error occurred:', errorMessage);
       throw error;
     }
   }
 
-  public async paginate(take: number, skip: number): Promise<ResponsePaginate<D>> {
+  public paginate(take: number, skip: number): Promise<ResponsePaginate<D>> {
     const queryTake: number = take || PaginationConstants.DEFAULT_TAKE;
     const querySkip: number = skip || PaginationConstants.DEFAULT_SKIP;
-    const options: FindManyOptions<E> = {
-      where: {
-        isDeleted: false,
-      } as FindOptionsWhere<E>,
+    const criteria: FindAndCountCriteria = {
+      onlyNotDeleted: true,
       take: queryTake,
       skip: querySkip,
-      ...(take || skip ? { take, skip } : {}),
     };
-    const { data, count }: ResponsePaginate<D> = await this.findAndCount(options);
-    return {
-      data,
-      count,
-    };
+    return this.findAndCount(criteria);
   }
 
   public async search(queryData: Query<D>): Promise<SearchResponse<D>> {
     const pagination: { take?: number; skip?: number } = this.buildPagination(queryData);
-    const whereClause: FindOptionsWhere<E>[] = this.buildWhereClause(queryData);
-
-    const { data, count }: ResponsePaginate<D> = await this.findAndCount({
-      where: whereClause,
-      order: queryData.orders as FindOptionsOrder<E>,
+    const criteria: FindAndCountCriteria = {
+      onlyNotDeleted: false,
+      attributes: queryData.attributes.map((attribute: Attribute) => ({
+        key: attribute.key,
+        value: attribute.value,
+        comparator: attribute.comparator,
+      })),
+      comparisonType: queryData.type,
+      order: queryData.orders as Record<string, string>,
       ...pagination,
-    });
+    };
 
+    const { data, count }: ResponsePaginate<D> = await this.findAndCount(criteria);
     return this.buildSearchResponse(data, count, queryData, pagination);
   }
 
@@ -155,26 +150,6 @@ export class BaseService<E extends BaseEntity, D extends Base>
     };
   }
 
-  private buildWhereClause(queryData: Query<D>): FindOptionsWhere<E>[] {
-    const filterCriteria = queryData.attributes.map((attribute) => ({
-      [attribute.key]: this.buildFilterValue(attribute),
-    }));
-
-    const isAndQuery: boolean = queryData.type.toUpperCase() === ComparisonTypeEnum.AND;
-    const whereCondition: any = isAndQuery ? { $and: filterCriteria } : { $or: filterCriteria };
-    return whereCondition as FindOptionsWhere<E>[];
-  }
-
-  private buildFilterValue(attribute: { comparator: ComparatorEnum; value: any }): any {
-    if (attribute.comparator === ComparatorEnum.EQUALS) {
-      return attribute.value;
-    }
-    if (attribute.comparator === ComparatorEnum.LIKE) {
-      return new RegExp(`^${attribute.value}`, 'i');
-    }
-    return attribute.value;
-  }
-
   private buildSearchResponse(
     data: D[],
     count: number,
@@ -182,7 +157,6 @@ export class BaseService<E extends BaseEntity, D extends Base>
     pagination: { take?: number; skip?: number }
   ): SearchResponse<D> {
     const isPaginable: boolean = queryData.isPaginable !== false;
-
     const response: SearchResponse<D> = { data, count };
 
     if (isPaginable && pagination.take && pagination.skip !== undefined) {
@@ -198,5 +172,12 @@ export class BaseService<E extends BaseEntity, D extends Base>
       return Math.trunc(count / take);
     }
     return Math.trunc(count / take + 1);
+  }
+
+  private toIdString(id: string | ObjectId): string {
+    if (id instanceof ObjectId) {
+      return id.toHexString();
+    }
+    return String(id);
   }
 }

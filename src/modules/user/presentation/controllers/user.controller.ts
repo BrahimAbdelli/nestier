@@ -1,11 +1,28 @@
 import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ValidateObjectIdPipe } from '@shared/common/pipes';
 import { UserService } from '../../application/services/user.service';
 import { User } from '../../domain/value-objects/user';
 import { UserLogin } from '../../domain/value-objects/user-login';
 import { UserUpdatePassword } from '../../domain/value-objects/user-update-password';
-import { CreateUserDto, UpdateNewPasswordDto, UpdateUserDto, UserLoginDto, UserLoginResponseDto, UserResponseDto } from '../dtos';
+import {
+  CreateUserDto,
+  UpdateNewPasswordDto,
+  UpdateUserDto,
+  UserLoginDto,
+  UserLoginResponseDto,
+  UserResponseDto,
+} from '../dtos';
 import { FindAndSearchUserResponseDto } from '../dtos/find-and-search-user-response.dto';
 import { UserDto } from '../dtos/user.dto';
 import { UserDtoMapper } from '../mappers/user-dto.mapper';
@@ -19,7 +36,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly userDtoMapper: UserDtoMapper
-  ) { }
+  ) {}
 
   @Get('')
   @ApiOperation({ summary: 'Get all active users' })
@@ -33,7 +50,7 @@ export class UserController {
   @ApiOperation({ summary: 'Find user by email' })
   @ApiParam({ name: 'email', description: 'User email address' })
   @ApiOkResponse({ description: 'User found', type: UserDto })
-  public async findByEmail(@Param() params): Promise<UserDto> {
+  public async findByEmail(@Param() params: { email: string }): Promise<UserDto> {
     const user: User = await this.userService.findByEmail(params.email);
     return this.userDtoMapper.domainToDto(user);
   }
@@ -42,7 +59,7 @@ export class UserController {
   @ApiOperation({ summary: 'Find user by username' })
   @ApiParam({ name: 'username', description: 'Username to search' })
   @ApiOkResponse({ description: 'User found', type: UserDto })
-  public async findByUsername(@Param() params): Promise<UserDto> {
+  public async findByUsername(@Param() params: { username: string }): Promise<UserDto> {
     const user: User = await this.userService.findByUsername(params.username);
     return this.userDtoMapper.domainToDto(user);
   }
@@ -51,8 +68,8 @@ export class UserController {
   @ApiOperation({ summary: 'Find user by ID' })
   @ApiParam({ name: 'id', description: 'User ObjectId' })
   @ApiOkResponse({ description: 'User found', type: UserDto })
-  public async findById(@Param(new ValidateObjectIdPipe('User')) id): Promise<UserDto> {
-    const user: User = await this.userService.findOneById(id);
+  public async findById(@Param(new ValidateObjectIdPipe('User')) id: string): Promise<UserDto> {
+    const user: User = await this.userService.findOneById(String(id));
     return this.userDtoMapper.domainToDto(user);
   }
 
@@ -71,7 +88,7 @@ export class UserController {
   @ApiOperation({ summary: 'Request password reset email' })
   @ApiParam({ name: 'email', description: 'User email address' })
   @ApiCreatedResponse({ description: 'Password reset email sent', type: UserResponseDto })
-  public async forgotPassword(@Param() params): Promise<UserResponseDto> {
+  public async forgotPassword(@Param() params: { email: string }): Promise<UserResponseDto> {
     const user: User = await this.userService.forgotPassword(params.email);
     return this.userDtoMapper.domainToUserResponseDto(user);
   }

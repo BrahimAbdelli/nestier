@@ -1,4 +1,4 @@
-import { ConfigServerModel } from "./models/config-server.model";
+import { ConfigServerModel } from './models/config-server.model';
 
 export function serverConfig(): ConfigServerModel {
   return {

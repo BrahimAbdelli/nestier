@@ -7,7 +7,9 @@ import { mockQueryDtoFactory } from '../../../base/test/mocks/base.mock';
 import { ProductDto } from '../../presentation/dtos';
 import { CreateProductDto } from '../../presentation/dtos/create-product.dto';
 
-export function mockProductFactory(newProduct: DeepPartial<CreateProductDto> = new CreateProductDto()): CreateProductDto {
+export function mockProductFactory(
+  newProduct: DeepPartial<CreateProductDto> = new CreateProductDto()
+): CreateProductDto {
   const product: CreateProductDto = {
     name: faker.commerce.productName(),
     price: faker.number.float({ min: 1, max: 1000, fractionDigits: 2 }),
@@ -17,23 +19,30 @@ export function mockProductFactory(newProduct: DeepPartial<CreateProductDto> = n
   return Object.assign(product, newProduct);
 }
 
-export function mockProductArrayFactory(count: number, overrides: DeepPartial<CreateProductDto> = new CreateProductDto()): CreateProductDto[] {
+export function mockProductArrayFactory(
+  count: number,
+  overrides: DeepPartial<CreateProductDto> = new CreateProductDto()
+): CreateProductDto[] {
   return Array.from({ length: count }, () => mockProductFactory(overrides));
 }
 
-export function mockExpensiveProductFactory(overrides: DeepPartial<CreateProductDto> = new CreateProductDto()): CreateProductDto {
+export function mockExpensiveProductFactory(
+  overrides: DeepPartial<CreateProductDto> = new CreateProductDto()
+): CreateProductDto {
   return mockProductFactory({
     price: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
     name: faker.commerce.productName() + ' (Premium)',
-    ...overrides
+    ...overrides,
   });
 }
 
-export function mockCheapProductFactory(overrides: DeepPartial<CreateProductDto> = new CreateProductDto()): CreateProductDto {
+export function mockCheapProductFactory(
+  overrides: DeepPartial<CreateProductDto> = new CreateProductDto()
+): CreateProductDto {
   return mockProductFactory({
     price: faker.number.float({ min: 0.01, max: 10, fractionDigits: 2 }),
     name: faker.commerce.productName() + ' (Budget)',
-    ...overrides
+    ...overrides,
   });
 }
 
@@ -47,6 +56,6 @@ export function mockProductSearchCriteriaFactory(
     take: 10,
     skip: 0,
     orders: {},
-    ...overrides
+    ...overrides,
   });
 }

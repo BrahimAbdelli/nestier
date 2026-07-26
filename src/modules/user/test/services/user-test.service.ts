@@ -15,8 +15,8 @@ export class UserTestService implements UserTestInterface {
 
   constructor(
     private readonly userRepository: Repository<UserEntity>,
-    private readonly logger: Logger,
-  ) { }
+    private readonly logger: Logger
+  ) {}
 
   async clearUsers(): Promise<void> {
     try {

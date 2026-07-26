@@ -6,4 +6,3 @@ export interface TestDataGeneratorInterface {
   // Data cleanup
   cleanupGeneratedData(): void;
 }
-

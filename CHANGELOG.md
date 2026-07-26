@@ -1,5 +1,46 @@
 # Changelog
 
+## [2.0.3] - 2026-07-26
+
+### Changed (hexagonal Phase 1 — base kernel)
+- Moved `BaseEntity` from domain to `infrastructure/persistence/typeorm/`
+- `BaseRepository<D>` / `BaseService<D>` no longer parameterized by TypeORM entities
+- Repository `findAndCount` uses domain `FindAndCountCriteria` (TypeORM translation in adapter only)
+- `BaseControllerInterface` lives under presentation; `findOne` returns DTOs via mapper
+- Port IDs use `string` (adapters convert to/from `ObjectId`)
+
+### Fixed
+- Easy ESLint wins: unused imports/vars, redundant `return await` / useless `async`, missing return types, typed user route params (~36 warnings cleared)
+- CI `format:check`: force LF via `.editorconfig` / Prettier / `.gitattributes` (was CRLF locally vs LF on Linux runners)
+- TypeScript 6 build: set `rootDir` to `./src`, drop deprecated `baseUrl` (paths made relative)
+
+### Changed (dependencies)
+- `npm update --legacy-peer-deps` within caret ranges (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, eslint 10.8.0, …)
+- Left major bumps alone (AutoMapper 9, TypeScript 7, nodemailer 9, puppeteer 25, sonarqube-scanner 5)
+- Add `@eslint/js` (required by flat `eslint.config.js` on ESLint 10)
+- Track `package-lock.json` again so CI `npm ci` works; add `format:check` script
+
+### Verified
+- Unit tests: 127/127
+- E2E tests: 85/85
+
+## [2.0.2] - 2026-07-19
+
+### Changed
+- Repository `delete` uses criteria `{ _id }` instead of a bare id argument
+- Mailer template path resolves from `process.cwd()/templates` (works in dist and Docker)
+- Docker Compose / CI MongoDB image bumped to `mongo:7.0` (matches MongoDB driver 7)
+- README badges and tech stack versions synced with `package.json`
+- Dependency updates via `npm update --legacy-peer-deps` (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, …)
+- Enable `esModuleInterop`; E2E specs use default `supertest` import (compatible with newer `@types/supertest`)
+
+### Notes
+- TypeORM `Equal()` is **not** used in Mongo persistence: FindOperators are not applied the same way as on SQL and break lookups. Use `Equal()` when forking to MySQL/Postgres (ChainVault pattern).
+
+### Verified
+- Unit tests: 127/127
+- E2E tests: 85/85
+
 ## [2.0.1] - 2026-01-24
 
 ### Changed

@@ -11,8 +11,14 @@ import { CategoryDto, CreateCategoryDto, FindAndSearchCategoryResponseDto, Updat
 import { AttributeDto } from '@shared/common/search';
 
 @Injectable()
-export class CategoryDtoMapper implements BaseDtoMapperInterface<Category, CategoryDto, CreateCategoryDto, UpdateCategoryDto, FindAndSearchCategoryResponseDto> {
-  constructor(@InjectMapper() private readonly classMapper: Mapper) { }
+export class CategoryDtoMapper implements BaseDtoMapperInterface<
+  Category,
+  CategoryDto,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+  FindAndSearchCategoryResponseDto
+> {
+  constructor(@InjectMapper() private readonly classMapper: Mapper) {}
 
   public domainsToFindAndSearchDtos(source: Category[]): FindAndSearchCategoryResponseDto[] {
     if (source === undefined) {
@@ -24,7 +30,7 @@ export class CategoryDtoMapper implements BaseDtoMapperInterface<Category, Categ
   public domainToResponsePaginateDto(source: ResponsePaginate<Category>): ResponsePaginate<CategoryDto> {
     return {
       data: this.domainsToDtos(source.data),
-      count: source.count
+      count: source.count,
     };
   }
 

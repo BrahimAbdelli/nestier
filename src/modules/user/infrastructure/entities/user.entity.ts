@@ -2,7 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { Expose } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
-import { BaseEntity } from '../../../base/domain/entities/base.entity';
+import { BaseEntity } from '../../../base/infrastructure/persistence/typeorm/base.entity';
 
 const SALT_ROUNDS = 10;
 
@@ -68,7 +68,7 @@ export class UserEntity extends BaseEntity {
 
   @BeforeInsert()
   @BeforeUpdate()
-  private beforeActionsPassword() {
+  private beforeActionsPassword(): void {
     if (this.tempPassword !== this.password) {
       this.password = bcrypt.hashSync(this.password, SALT_ROUNDS);
     }
@@ -78,7 +78,7 @@ export class UserEntity extends BaseEntity {
   }
 
   @BeforeInsert()
-  private beforeInsertActionsUser() {
+  private beforeInsertActionsUser(): void {
     this.status = true;
     this.createdAt = new Date();
   }

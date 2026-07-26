@@ -7,15 +7,15 @@ import { QueryDto } from '@shared/common/search/dtos/query.dto';
 import { SearchResponseDto } from '@shared/common/search/dtos/search-response.dto';
 import { ResponsePaginate } from '@shared/common/types/response-paginate.type';
 import { ResponsePaginateDto } from '@shared/common/types/response-paginate.type.dto';
-import { BaseControllerInterface } from '../../application/ports/base-controller.interface';
 import { BaseServiceInterface } from '../../application/ports/base-service.interface';
 import { Base } from '../../domain/value-objects/base';
 import { BaseDtoMapperInterface } from '../../presentation/dtos/base-dto-mapper.interface';
 import { BaseDto } from '../../presentation/dtos/dtos/base.dto';
+import { BaseControllerInterface } from './base-controller.interface';
 
 export function BaseController<D extends Base, B extends BaseDto, CreateDtoType, UpdateDtoType, FindAndSearchDto>(
   CreateDto: Type<CreateDtoType>,
-  UpdateDto: Type<UpdateDtoType>,
+  UpdateDto: Type<UpdateDtoType>
 ): Type<BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto>> {
   const createPipe: AbstractValidationPipe = new AbstractValidationPipe(
     { whitelist: true, transform: true },
@@ -26,8 +26,13 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
     { body: UpdateDto }
   );
 
-  class GenericsController<D extends Base, B extends BaseDto, CreateDtoType, UpdateDtoType, FindAndSearchDto>
-    implements BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto> {
+  class GenericsController<
+    D extends Base,
+    B extends BaseDto,
+    CreateDtoType,
+    UpdateDtoType,
+    FindAndSearchDto,
+  > implements BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto> {
     protected readonly mapper: BaseDtoMapperInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto>;
 
     constructor(
@@ -60,8 +65,9 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
       description: 'used to update an object inside our database',
       required: true,
     })
-    public findOne(@Param(new ValidateObjectIdPipe('')) id): Promise<D> {
-      return this.service.findOneById(id);
+    public async findOne(@Param(new ValidateObjectIdPipe('')) id): Promise<B> {
+      const domain: D = await this.service.findOneById(String(id));
+      return this.mapper.domainToDto(domain);
     }
 
     @Post()
@@ -99,7 +105,7 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
       required: true,
     })
     public async archive(@Param(new ValidateObjectIdPipe('')) id): Promise<void> {
-      await this.service.softDelete(id, true);
+      await this.service.softDelete(String(id), true);
     }
 
     @Patch('unarchive/:id')
@@ -111,7 +117,7 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
       required: true,
     })
     public async unarchive(@Param(new ValidateObjectIdPipe('')) id): Promise<void> {
-      await this.service.softDelete(id, false);
+      await this.service.softDelete(String(id), false);
     }
 
     @Delete(':id')
@@ -123,7 +129,7 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
       required: true,
     })
     public delete(@Param(new ValidateObjectIdPipe('')) id): Promise<void> {
-      return this.service.delete(id);
+      return this.service.delete(String(id));
     }
 
     @Delete()
@@ -148,25 +154,25 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
             skip: 0,
             attributes: [
               {
-                key: "name",
-                value: "p",
-                comparator: "LIKE"
+                key: 'name',
+                value: 'p',
+                comparator: 'LIKE',
               },
               {
-                key: "isDeleted",
+                key: 'isDeleted',
                 value: false,
-                comparator: "EQUALS"
-              }
+                comparator: 'EQUALS',
+              },
             ],
             orders: {
-              name: "ASC",
-              price: "DESC"
+              name: 'ASC',
+              price: 'DESC',
             },
-            type: "AND",
-            isPaginable: false
-          }
-        }
-      }
+            type: 'AND',
+            isPaginable: false,
+          },
+        },
+      },
     })
     public async search(@Body() queryDto: QueryDto<B>): Promise<SearchResponseDto<B>> {
       const queryDomain = this.mapper.queryDtoToDomain(queryDto);

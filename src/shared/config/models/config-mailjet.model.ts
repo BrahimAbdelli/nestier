@@ -21,4 +21,3 @@ export class ConfigMailjetModel {
   @IsString()
   companyName: string;
 }
-

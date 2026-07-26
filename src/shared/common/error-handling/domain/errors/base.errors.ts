@@ -7,7 +7,7 @@ export class BaseErrors {
       code: 'INTERNAL_SERVER_ERROR',
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       message: `Internal server error in ${service}: ${details}`,
-      metadata: JSON.stringify({ service, details })
+      metadata: JSON.stringify({ service, details }),
     };
   }
 
@@ -16,16 +16,20 @@ export class BaseErrors {
       code: 'EXTERNAL_SERVICE_ERROR',
       status: HttpStatus.BAD_GATEWAY,
       message: `External service '${service}' error: ${error}`,
-      metadata: JSON.stringify({ service, error })
+      metadata: JSON.stringify({ service, error }),
     };
   }
 
-  public static OPERATION_NOT_ALLOWED(operation: string, reason: string, context?: Record<string, unknown>): ApplicationError {
+  public static OPERATION_NOT_ALLOWED(
+    operation: string,
+    reason: string,
+    context?: Record<string, unknown>
+  ): ApplicationError {
     return {
       code: 'OPERATION_NOT_ALLOWED',
       status: HttpStatus.FORBIDDEN,
       message: `Operation '${operation}' is not allowed: ${reason}`,
-      metadata: JSON.stringify({ operation, reason, ...context })
+      metadata: JSON.stringify({ operation, reason, ...context }),
     };
   }
 
@@ -34,7 +38,7 @@ export class BaseErrors {
       code: 'FIELD_NOT_UNIQUE',
       status: HttpStatus.BAD_REQUEST,
       message: `${fieldKey} must be unique. The value '${fieldValue}' is already in use.`,
-      metadata: fieldValue
+      metadata: fieldValue,
     };
   }
 }

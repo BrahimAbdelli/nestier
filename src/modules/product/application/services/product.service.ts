@@ -7,21 +7,20 @@ import { IGetUserAuthInfoRequest } from '../../../../modules/user/domain/value-o
 import { BaseService } from '../../../base/application/services/base.service';
 import { BaseRepository } from '../../../base/domain/repositories/base.repository';
 import { Product } from '../../domain/value-objects/product';
-import { ProductEntity } from '../../infrastructure/entities/product.entity';
 import { FindExpensiveProductsUseCase } from '../use-cases/find-expensive-products.use-case';
 import { FindProductsByNameUseCase } from '../use-cases/find-products-by-name.use-case';
 
 @Injectable()
-export class ProductService extends BaseService<ProductEntity, Product> {
+export class ProductService extends BaseService<Product> {
   private readonly productConfig: ConfigProductModel;
 
   constructor(
-    @Inject(BaseRepository) baseRepository: BaseRepository<ProductEntity, Product>,
+    @Inject(BaseRepository) baseRepository: BaseRepository<Product>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
     private readonly findExpensiveProductsUseCase: FindExpensiveProductsUseCase,
     private readonly findProductsByNameUseCase: FindProductsByNameUseCase,
     private readonly configService: ConfigService,
-    logger: Logger,
+    logger: Logger
   ) {
     super(baseRepository, request, logger);
     this.productConfig = this.configService.get<ConfigProductModel>('product');
@@ -33,23 +32,23 @@ export class ProductService extends BaseService<ProductEntity, Product> {
     domain.validate();
     domain.applyBusinessRules(this.productConfig.restrictedWords);
 
-    // Use the inherited create method from BaseService (which uses the use case)
+    // Use the inherited create method from BaseService
     await super.create(domain);
   }
 
   // Enhanced update method with business logic
-  public async update(domain: Product): Promise<Product> {
+  public update(domain: Product): Promise<Product> {
     // Apply domain validation and business rules
     domain.validate();
     domain.applyBusinessRules(this.productConfig.restrictedWords);
 
     // Use the inherited update method from BaseService
-    return await super.update(domain);
+    return super.update(domain);
   }
 
   // Product-specific business methods
-  public async findExpensiveProducts(threshold: number = 1000): Promise<Product[]> {
-    return await this.findExpensiveProductsUseCase.execute(threshold);
+  public findExpensiveProducts(threshold: number = 1000): Promise<Product[]> {
+    return this.findExpensiveProductsUseCase.execute(threshold);
   }
 
   public findProductsByName(name: string): Promise<Product[]> {
