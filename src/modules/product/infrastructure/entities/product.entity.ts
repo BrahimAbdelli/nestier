@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { Exclude } from 'class-transformer';
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '../../../base/domain/entities/base.entity';
+import { BaseEntity } from '../../../base/infrastructure/persistence/typeorm/base.entity';
 
 @Entity('product')
 @Exclude()

@@ -2,7 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { Expose } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
-import { BaseEntity } from '../../../base/domain/entities/base.entity';
+import { BaseEntity } from '../../../base/infrastructure/persistence/typeorm/base.entity';
 
 const SALT_ROUNDS = 10;
 

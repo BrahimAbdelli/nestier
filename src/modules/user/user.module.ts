@@ -56,7 +56,7 @@ import { UserDtoMapperProfile } from './presentation/mappers/user-dto.mapper.pro
         repo: Repository<UserEntity>,
         mapper: BaseEntityMapperInterface<UserEntity, User>,
         logger: Logger,
-      ): BaseRepository<UserEntity, User> => {
+      ): BaseRepository<User> => {
         return new TypeOrmBaseRepository<UserEntity, User>(repo, mapper, logger);
       },
     },

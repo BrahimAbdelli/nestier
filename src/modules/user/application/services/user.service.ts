@@ -24,7 +24,7 @@ import { UserEntity } from '../../infrastructure/entities/user.entity';
 import { UserResetPasswordRequestContextService } from './user-reset-password-request-context.service';
 
 @Injectable({ scope: Scope.REQUEST })
-export class UserService extends BaseService<UserEntity, User> {
+export class UserService extends BaseService<User> {
   private readonly authConfig: ConfigAuthModel;
 
   constructor(
@@ -122,7 +122,7 @@ export class UserService extends BaseService<UserEntity, User> {
 
 
   public async archive(id: ObjectId): Promise<void> {
-    const user: User = await this.userRepository.findOneById(id);
+    const user: User = await this.userRepository.findOneById(id.toHexString());
     if (!user) {
       this.logger.error('User not found', { id });
       throw new ApplicationException(UserErrors.USER_NOT_FOUND(id.toString()));
@@ -137,7 +137,7 @@ export class UserService extends BaseService<UserEntity, User> {
   }
 
   public async unarchive(id: ObjectId): Promise<void> {
-    const user: User = await this.userRepository.findOneById(id);
+    const user: User = await this.userRepository.findOneById(id.toHexString());
     if (!user) {
       this.logger.error('User not found', { id });
       throw new ApplicationException(UserErrors.USER_NOT_FOUND(id.toString()));

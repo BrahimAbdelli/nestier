@@ -51,8 +51,8 @@ export class UserController {
   @ApiOperation({ summary: 'Find user by ID' })
   @ApiParam({ name: 'id', description: 'User ObjectId' })
   @ApiOkResponse({ description: 'User found', type: UserDto })
-  public async findById(@Param(new ValidateObjectIdPipe('User')) id): Promise<UserDto> {
-    const user: User = await this.userService.findOneById(id);
+  public async findById(@Param(new ValidateObjectIdPipe('User')) id: string): Promise<UserDto> {
+    const user: User = await this.userService.findOneById(String(id));
     return this.userDtoMapper.domainToDto(user);
   }
 

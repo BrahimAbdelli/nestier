@@ -5,12 +5,11 @@ import { IGetUserAuthInfoRequest } from '../../../../modules/user/domain/value-o
 import { BaseService } from '../../../base/application/services/base.service';
 import { BaseRepository } from '../../../base/domain/repositories/base.repository';
 import { Category } from '../../domain/value-objects/category';
-import { CategoryEntity } from '../../infrastructure/entities/category.entity';
 
 @Injectable()
-export class CategoryService extends BaseService<CategoryEntity, Category> {
+export class CategoryService extends BaseService<Category> {
   constructor(
-    @Inject(BaseRepository) baseRepository: BaseRepository<CategoryEntity, Category>,
+    @Inject(BaseRepository) baseRepository: BaseRepository<Category>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
     logger: Logger,
   ) {

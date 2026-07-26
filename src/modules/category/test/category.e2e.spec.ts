@@ -81,7 +81,7 @@ describe('Category E2E', () => {
         .expect(HttpStatus.OK);
 
       expect(response.body).toBeInstanceOf(Array);
-      expect(response.body.length).toBe(4);
+      expect(response.body).toHaveLength(4);
     });
   });
 
@@ -187,7 +187,7 @@ describe('Category E2E', () => {
 
       const categories: CategoryDto[] = response.body.data;
       expect(categories).toBeInstanceOf(Array);
-      expect(categories.length).toBe(0);
+      expect(categories).toHaveLength(0);
     });
   });
 
@@ -233,7 +233,7 @@ describe('Category E2E', () => {
         .expect(HttpStatus.CREATED);
 
       const existingCategories: CategoryEntity[] = await categoryTestService.getTestCategories();
-      expect(existingCategories.length).toBe(5);
+      expect(existingCategories).toHaveLength(5);
 
       const testCategory: CategoryEntity = existingCategories[4];
       expect(testCategory._id).toBeDefined();
@@ -382,7 +382,7 @@ describe('Category E2E', () => {
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Entity not found',
-        expect.objectContaining({ _id: nonExistentId })
+        expect.objectContaining({ _id: nonExistentId.toHexString() })
       );
     });
   });
@@ -412,7 +412,7 @@ describe('Category E2E', () => {
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Entity not found',
-        expect.objectContaining({ _id: nonExistentId })
+        expect.objectContaining({ _id: nonExistentId.toHexString() })
       );
     });
   });
@@ -441,7 +441,7 @@ describe('Category E2E', () => {
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Entity not found',
-        expect.objectContaining({ _id: nonExistentId })
+        expect.objectContaining({ _id: nonExistentId.toHexString() })
       );
     });
   });
@@ -458,10 +458,18 @@ describe('Category E2E', () => {
       const response: SupertestResponse = await getCategoryById(createdCategoryEntity._id.toString())
         .expect(HttpStatus.OK);
 
+      // Response is a DTO (mapped), not a raw domain/persistence object
       expect(response.body._id).toBe(createdCategoryEntity._id.toString());
       expect(response.body.name).toBe(createdCategoryEntity.name);
       expect(response.body.quantity).toBe(createdCategoryEntity.quantity);
       expect(response.body.description).toBe(createdCategoryEntity.description);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          _id: expect.any(String),
+          name: expect.any(String),
+          quantity: expect.any(Number),
+        })
+      );
     });
 
     it('404 NOT FOUND - should handle non-existent category ID', async () => {
@@ -470,7 +478,7 @@ describe('Category E2E', () => {
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Entity not found',
-        expect.objectContaining({ _id: nonExistentId })
+        expect.objectContaining({ _id: nonExistentId.toHexString() })
       );
     });
   });

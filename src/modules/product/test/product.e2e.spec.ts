@@ -85,7 +85,7 @@ describe('Product E2E', () => {
         .expect(HttpStatus.OK);
 
       expect(response.body).toBeInstanceOf(Array);
-      expect(response.body.length).toBe(4);
+      expect(response.body).toHaveLength(4);
     });
   });
 
@@ -213,7 +213,7 @@ describe('Product E2E', () => {
         .expect(HttpStatus.CREATED);
 
       const existingProducts: ProductEntity[] = await productTestService.getTestProducts();
-      expect(existingProducts.length).toBe(5);
+      expect(existingProducts).toHaveLength(5);
 
       const existingProduct: ProductEntity = existingProducts[4];
       expect(existingProduct._id).toBeDefined();
@@ -333,10 +333,18 @@ describe('Product E2E', () => {
       const response: SupertestResponse = await getProductById(productId)
         .expect(HttpStatus.OK);
 
+      // Response is a DTO (mapped), not a raw domain/persistence object
       expect(response.body._id).toBe(productId);
       expect(response.body.name).toBe(existingProduct.name);
       expect(response.body.price).toBe(existingProduct.price);
       expect(response.body.description).toBe(existingProduct.description);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          _id: expect.any(String),
+          name: expect.any(String),
+          price: expect.any(Number),
+        })
+      );
     });
 
     it('404 NOT FOUND - should return 404 if product not found', async () => {
@@ -355,7 +363,7 @@ describe('Product E2E', () => {
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Entity not found',
-        expect.objectContaining({ _id: nonExistentId })
+        expect.objectContaining({ _id: nonExistentId.toHexString() })
       );
     });
   });
@@ -506,8 +514,11 @@ describe('Product E2E', () => {
     });
 
     it('should handle non-existent product ID', async () => {
-      await getProductById(nonExistentId.toString())
+      const response: SupertestResponse = await getProductById(nonExistentId.toString())
         .expect(HttpStatus.NOT_FOUND);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body.code).toBe('NOT_FOUND');
     });
   });
 

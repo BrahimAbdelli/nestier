@@ -39,7 +39,7 @@ import { ProductDtoMapperProfile } from './presentation/mappers/product-dto.mapp
         repo: Repository<ProductEntity>,
         mapper: BaseEntityMapperInterface<ProductEntity, Product>,
         logger: Logger,
-      ): BaseRepository<ProductEntity, Product> => {
+      ): BaseRepository<Product> => {
         return new TypeOrmBaseRepository<ProductEntity, Product>(repo, mapper, logger);
       },
     },

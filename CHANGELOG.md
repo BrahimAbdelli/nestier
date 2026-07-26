@@ -1,8 +1,23 @@
 # Changelog
 
+## [2.0.3] - 2026-07-26
+
+### Changed (hexagonal Phase 1 — base kernel)
+- Moved `BaseEntity` from domain to `infrastructure/persistence/typeorm/`
+- `BaseRepository<D>` / `BaseService<D>` no longer parameterized by TypeORM entities
+- Repository `findAndCount` uses domain `FindAndCountCriteria` (TypeORM translation in adapter only)
+- `BaseControllerInterface` lives under presentation; `findOne` returns DTOs via mapper
+- Port IDs use `string` (adapters convert to/from `ObjectId`)
+
+### Verified
+- Unit tests: 127/127
+- E2E tests: 85/85
+
 ## [2.0.2] - 2026-07-19
 
 ### Changed
+- Repository `delete` uses criteria `{ _id }` instead of a bare id argument
+- Mailer template path resolves from `process.cwd()/templates` (works in dist and Docker)
 - Docker Compose / CI MongoDB image bumped to `mongo:7.0` (matches MongoDB driver 7)
 - README badges and tech stack versions synced with `package.json`
 - Dependency updates via `npm update --legacy-peer-deps` (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, …)
