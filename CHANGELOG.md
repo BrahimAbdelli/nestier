@@ -9,6 +9,10 @@
 - `BaseControllerInterface` lives under presentation; `findOne` returns DTOs via mapper
 - Port IDs use `string` (adapters convert to/from `ObjectId`)
 
+### Changed (dependencies)
+- `npm update --legacy-peer-deps` within caret ranges (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, eslint 10.8.0, …)
+- Left major bumps alone (AutoMapper 9, TypeScript 7, nodemailer 9, puppeteer 25, sonarqube-scanner 5)
+
 ### Verified
 - Unit tests: 127/127
 - E2E tests: 85/85
