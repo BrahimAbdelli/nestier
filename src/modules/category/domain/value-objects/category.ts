@@ -25,7 +25,6 @@ export class Category extends Base {
 
   // Business rules for category
   public applyBusinessRules(): void {
-
     if (this.name.length > 100) {
       throw new ApplicationException(CategoryErrors.CATEGORY_NAME_TOO_LONG(this.name));
     }

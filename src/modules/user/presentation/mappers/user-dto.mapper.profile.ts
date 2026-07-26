@@ -7,7 +7,16 @@ import { AttributeDto } from '@shared/common/search/dtos/attribute.dto';
 import { QueryDto } from '@shared/common/search/dtos/query.dto';
 import { User } from '../../domain/value-objects/user';
 import { UserLogin } from '../../domain/value-objects/user-login';
-import { CreateUserDto, FindAndSearchUserResponseDto, UpdateNewPasswordDto, UpdateUserDto, UserDto, UserLoginDto, UserLoginResponseDto, UserResponseDto } from '../dtos';
+import {
+  CreateUserDto,
+  FindAndSearchUserResponseDto,
+  UpdateNewPasswordDto,
+  UpdateUserDto,
+  UserDto,
+  UserLoginDto,
+  UserLoginResponseDto,
+  UserResponseDto,
+} from '../dtos';
 import { UserUpdatePassword } from '../../domain/value-objects/user-update-password';
 
 @Injectable()
@@ -16,8 +25,8 @@ export class UserDtoMapperProfile extends AutomapperProfile {
     super(mapper);
   }
 
-  get profile() {
-    return (mapper: Mapper) => {
+  public get profile(): (mapper: Mapper) => void {
+    return (mapper: Mapper): void => {
       createMap(mapper, User, FindAndSearchUserResponseDto);
       createMap(mapper, FindAndSearchUserResponseDto, User);
       createMap(mapper, User, UserDto);
@@ -40,4 +49,3 @@ export class UserDtoMapperProfile extends AutomapperProfile {
     };
   }
 }
-

@@ -73,7 +73,7 @@ describe('ProductService', () => {
 
     mockFindExpensiveUseCase = {
       execute: jest.fn(),
-    } as unknown as jest.Mocked<FindExpensiveProductsUseCase>;;
+    } as unknown as jest.Mocked<FindExpensiveProductsUseCase>;
 
     mockFindByNameUseCase = {
       execute: jest.fn(),

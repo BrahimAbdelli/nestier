@@ -42,7 +42,7 @@ export class SendPasswordResetEmailRequestBuilder {
 export class SendPasswordResetEmailUseCase {
   constructor(
     @Inject(USER_EMAIL_INTERFACE) private readonly userEmailInterface: UserEmailInterface,
-    private readonly emailTemplateService: EmailTemplateService,
+    private readonly emailTemplateService: EmailTemplateService
   ) {}
 
   public async execute(request: SendPasswordResetEmailRequest): Promise<void> {
@@ -69,5 +69,4 @@ export class SendPasswordResetEmailUseCase {
 
     await this.userEmailInterface.sendPasswordResetEmail(emailRequest);
   }
-
 }

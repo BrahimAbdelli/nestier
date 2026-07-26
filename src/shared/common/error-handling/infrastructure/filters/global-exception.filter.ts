@@ -1,12 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-  Logger,
-  Injectable,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger, Injectable } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ErrorMapperService } from '../mappers/error-mapper.service';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
@@ -16,7 +8,7 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger: Logger = new Logger(GlobalExceptionFilter.name);
 
-  constructor(private readonly errorMapper: ErrorMapperService) { }
+  constructor(private readonly errorMapper: ErrorMapperService) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx: HttpArgumentsHost = host.switchToHttp();
@@ -45,13 +37,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     this.logError(exception, request, status);
 
-    const responseBody: any = typeof exceptionResponse === 'object' && exceptionResponse !== null
-      ? { ...exceptionResponse, path: request.url, method: request.method }
-      : {
-        message: exceptionResponse,
-        path: request.url,
-        method: request.method,
-      };
+    const responseBody: any =
+      typeof exceptionResponse === 'object' && exceptionResponse !== null
+        ? { ...exceptionResponse, path: request.url, method: request.method }
+        : {
+            message: exceptionResponse,
+            path: request.url,
+            method: request.method,
+          };
 
     response.status(status).json(responseBody);
   }
@@ -76,10 +69,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         logContext
       );
     } else if (status >= 400) {
-      this.logger.warn(
-        `Client error: ${exception instanceof Error ? exception.message : 'Unknown error'}`,
-        logContext
-      );
+      this.logger.warn(`Client error: ${exception instanceof Error ? exception.message : 'Unknown error'}`, logContext);
     }
   }
 }

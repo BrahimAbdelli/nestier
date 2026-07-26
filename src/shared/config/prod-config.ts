@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 config();
 
-export const prodConfig = () => ({
+export const prodConfig = (): { name: string } => ({
   name: 'prod',
 });

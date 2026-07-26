@@ -15,7 +15,7 @@ export class ProductErrors {
       code: 'PRODUCT_NAME_TOO_LONG',
       status: HttpStatus.BAD_REQUEST,
       message: `Product name '${name}' exceeds the maximum length of 100 characters.`,
-      metadata: name
+      metadata: name,
     };
   }
 
@@ -24,7 +24,7 @@ export class ProductErrors {
       code: 'PRODUCT_PRICE_NEGATIVE',
       status: HttpStatus.BAD_REQUEST,
       message: `Product price cannot be negative. Provided value: ${price}`,
-      metadata: price.toString()
+      metadata: price.toString(),
     };
   }
 
@@ -41,7 +41,7 @@ export class ProductErrors {
       code: 'PRODUCT_ALREADY_EXISTS',
       status: HttpStatus.BAD_REQUEST,
       message: `Product with name '${productName}' already exists. Please choose a different name.`,
-      metadata: productName
+      metadata: productName,
     };
   }
 
@@ -50,7 +50,7 @@ export class ProductErrors {
       code: 'PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL',
       status: HttpStatus.BAD_REQUEST,
       message: `High-value product '${productName}' with price ${price} requires approval before creation.`,
-      metadata: JSON.stringify({ productName, price })
+      metadata: JSON.stringify({ productName, price }),
     };
   }
 
@@ -59,7 +59,7 @@ export class ProductErrors {
       code: 'PRODUCT_NAME_CONTAINS_RESTRICTED_WORD',
       status: HttpStatus.BAD_REQUEST,
       message: `Product name '${productName}' contains restricted word '${restrictedWord}'. Please choose a different name.`,
-      metadata: JSON.stringify({ productName, restrictedWord })
+      metadata: JSON.stringify({ productName, restrictedWord }),
     };
   }
 
@@ -68,7 +68,7 @@ export class ProductErrors {
       code: 'PRODUCT_PRICE_TOO_LOW',
       status: HttpStatus.BAD_REQUEST,
       message: `Product price ${price} is too low. Minimum price is $1`,
-      metadata: price.toString()
+      metadata: price.toString(),
     };
   }
 }

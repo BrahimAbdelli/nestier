@@ -9,8 +9,8 @@ export class AbstractValidationPipe extends ValidationPipe {
     super(options);
   }
 
-  async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
-    const targetType: any = this.targetTypes[metadata.type];
+  public transform(value: unknown, metadata: ArgumentMetadata): Promise<any> {
+    const targetType: Type | undefined = this.targetTypes[metadata.type];
     if (!targetType) {
       return super.transform(value, metadata);
     }

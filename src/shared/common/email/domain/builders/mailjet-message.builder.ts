@@ -1,4 +1,3 @@
-
 export class MailjetMessageBuilder {
   private readonly message: Record<string, unknown> = {};
 

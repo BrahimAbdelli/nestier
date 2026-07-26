@@ -47,9 +47,9 @@ describe('LoggerService', () => {
   });
 
   describe('Service Initialization', () => {
-  it('should be defined', () => {
-    expect(logger).toBeDefined();
-  });
+    it('should be defined', () => {
+      expect(logger).toBeDefined();
+    });
 
     it('should be an instance of Logger', () => {
       expect(logger).toBeInstanceOf(Logger);
@@ -137,7 +137,6 @@ describe('LoggerService', () => {
         expect(mockWinstonLogger.silly).toHaveBeenCalledWith(message);
       });
     });
-
   });
 
   describe('TypeORM Query Logging', () => {
@@ -174,7 +173,13 @@ describe('LoggerService', () => {
 
       it('should handle complex parameter types - testing real stringification logic', () => {
         const query: string = 'SELECT * FROM products WHERE id = ? AND name = ?';
-        const parameters: (object | string | number | boolean | null)[] = [{ id: 1, name: 'test' }, 'string', 123, true, null];
+        const parameters: (object | string | number | boolean | null)[] = [
+          { id: 1, name: 'test' },
+          'string',
+          123,
+          true,
+          null,
+        ];
 
         (logger as any).enabledQueryLogTypes = [TypeLogSql.QUERY];
 
@@ -243,7 +248,6 @@ describe('LoggerService', () => {
       });
     });
   });
-
 
   describe('Error Handling', () => {
     it('should handle stringifyParameters error gracefully - testing real error recovery logic', () => {

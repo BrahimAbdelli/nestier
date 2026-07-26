@@ -68,7 +68,7 @@ export class UserEntity extends BaseEntity {
 
   @BeforeInsert()
   @BeforeUpdate()
-  private beforeActionsPassword() {
+  private beforeActionsPassword(): void {
     if (this.tempPassword !== this.password) {
       this.password = bcrypt.hashSync(this.password, SALT_ROUNDS);
     }
@@ -78,7 +78,7 @@ export class UserEntity extends BaseEntity {
   }
 
   @BeforeInsert()
-  private beforeInsertActionsUser() {
+  private beforeInsertActionsUser(): void {
     this.status = true;
     this.createdAt = new Date();
   }

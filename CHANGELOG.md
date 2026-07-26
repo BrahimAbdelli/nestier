@@ -9,9 +9,14 @@
 - `BaseControllerInterface` lives under presentation; `findOne` returns DTOs via mapper
 - Port IDs use `string` (adapters convert to/from `ObjectId`)
 
+### Fixed
+- Easy ESLint wins: unused imports/vars, redundant `return await` / useless `async`, missing return types, typed user route params (~36 warnings cleared)
+
 ### Changed (dependencies)
 - `npm update --legacy-peer-deps` within caret ranges (NestJS 11.1.28, TypeORM 0.3.31, mongodb 7.5.0, eslint 10.8.0, …)
 - Left major bumps alone (AutoMapper 9, TypeScript 7, nodemailer 9, puppeteer 25, sonarqube-scanner 5)
+- Add `@eslint/js` (required by flat `eslint.config.js` on ESLint 10)
+- Track `package-lock.json` again so CI `npm ci` works; add `format:check` script
 
 ### Verified
 - Unit tests: 127/127

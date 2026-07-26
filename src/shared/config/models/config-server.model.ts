@@ -9,4 +9,3 @@ export class ConfigServerModel {
   @IsString()
   hostname: string;
 }
-

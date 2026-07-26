@@ -15,7 +15,7 @@ import { BaseControllerInterface } from './base-controller.interface';
 
 export function BaseController<D extends Base, B extends BaseDto, CreateDtoType, UpdateDtoType, FindAndSearchDto>(
   CreateDto: Type<CreateDtoType>,
-  UpdateDto: Type<UpdateDtoType>,
+  UpdateDto: Type<UpdateDtoType>
 ): Type<BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto>> {
   const createPipe: AbstractValidationPipe = new AbstractValidationPipe(
     { whitelist: true, transform: true },
@@ -26,9 +26,13 @@ export function BaseController<D extends Base, B extends BaseDto, CreateDtoType,
     { body: UpdateDto }
   );
 
-  class GenericsController<D extends Base, B extends BaseDto, CreateDtoType, UpdateDtoType, FindAndSearchDto>
-    implements BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto>
-  {
+  class GenericsController<
+    D extends Base,
+    B extends BaseDto,
+    CreateDtoType,
+    UpdateDtoType,
+    FindAndSearchDto,
+  > implements BaseControllerInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto> {
     protected readonly mapper: BaseDtoMapperInterface<D, B, CreateDtoType, UpdateDtoType, FindAndSearchDto>;
 
     constructor(

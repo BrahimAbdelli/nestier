@@ -15,4 +15,3 @@ export class UserLoginDto {
   @AutoMap()
   public password: string;
 }
-

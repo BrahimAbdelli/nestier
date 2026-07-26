@@ -66,4 +66,3 @@ export class UpdateUserDto extends BaseDto {
   @AutoMap()
   public about?: string;
 }
-

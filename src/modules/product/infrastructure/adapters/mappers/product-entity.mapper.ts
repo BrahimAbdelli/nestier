@@ -7,7 +7,7 @@ import { ProductEntity } from '../../entities/product.entity';
 
 @Injectable()
 export class ProductEntityMapper implements BaseEntityMapperInterface<ProductEntity, Product> {
-  constructor(@InjectMapper() private readonly classMapper: Mapper) { }
+  constructor(@InjectMapper() private readonly classMapper: Mapper) {}
 
   public domainToPersistence(source: Product): ProductEntity {
     return this.classMapper.map(source, Product, ProductEntity);

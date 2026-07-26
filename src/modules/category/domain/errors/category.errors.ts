@@ -15,7 +15,7 @@ export class CategoryErrors {
       code: 'CATEGORY_NAME_TOO_LONG',
       status: HttpStatus.BAD_REQUEST,
       message: `Category name '${name}' exceeds the maximum length of 100 characters.`,
-      metadata: name
+      metadata: name,
     };
   }
 
@@ -24,7 +24,7 @@ export class CategoryErrors {
       code: 'CATEGORY_QUANTITY_NEGATIVE',
       status: HttpStatus.BAD_REQUEST,
       message: `Category quantity cannot be negative. Provided value: ${quantity}`,
-      metadata: quantity.toString()
+      metadata: quantity.toString(),
     };
   }
 
@@ -33,7 +33,7 @@ export class CategoryErrors {
       code: 'CATEGORY_DESCRIPTION_TOO_LONG',
       status: HttpStatus.BAD_REQUEST,
       message: `Category description '${description}' exceeds the maximum length of 500 characters.`,
-      metadata: description
+      metadata: description,
     };
   }
 
@@ -42,7 +42,7 @@ export class CategoryErrors {
       code: 'CATEGORY_ALREADY_EXISTS',
       status: HttpStatus.BAD_REQUEST,
       message: `Category with name '${categoryName}' already exists. Please choose a different name.`,
-      metadata: categoryName
+      metadata: categoryName,
     };
   }
 }

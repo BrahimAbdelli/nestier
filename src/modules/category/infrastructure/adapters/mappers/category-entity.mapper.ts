@@ -7,7 +7,7 @@ import { CategoryEntity } from '../../entities/category.entity';
 
 @Injectable()
 export class CategoryEntityMapper implements BaseEntityMapperInterface<CategoryEntity, Category> {
-  constructor(@InjectMapper() private readonly classMapper: Mapper) { }
+  constructor(@InjectMapper() private readonly classMapper: Mapper) {}
 
   public domainToPersistence(source: Category): CategoryEntity {
     return this.classMapper.map(source, Category, CategoryEntity);
@@ -31,4 +31,3 @@ export class CategoryEntityMapper implements BaseEntityMapperInterface<CategoryE
     return this.classMapper.mapArray(source, CategoryEntity, Category);
   }
 }
-

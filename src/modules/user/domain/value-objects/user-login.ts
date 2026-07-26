@@ -1,4 +1,3 @@
-
 import { AutoMap } from '@automapper/classes';
 import { Base } from '../../../base/domain/value-objects/base';
 

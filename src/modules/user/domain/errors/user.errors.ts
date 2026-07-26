@@ -7,7 +7,7 @@ export class UserErrors {
       code: 'USER_NOT_FOUND',
       status: HttpStatus.NOT_FOUND,
       message: 'User not found.',
-      metadata: userId
+      metadata: userId,
     };
   }
 
@@ -24,7 +24,7 @@ export class UserErrors {
       code: 'USER_USERNAME_INVALID_LENGTH',
       status: HttpStatus.BAD_REQUEST,
       message: `Username '${username}' must be between 3 and 30 characters.`,
-      metadata: username
+      metadata: username,
     };
   }
 
@@ -33,7 +33,7 @@ export class UserErrors {
       code: 'USER_USERNAME_INVALID_CHARACTERS',
       status: HttpStatus.BAD_REQUEST,
       message: `Username '${username}' contains invalid characters. Only letters, numbers, and underscores are allowed.`,
-      metadata: username
+      metadata: username,
     };
   }
 
@@ -50,7 +50,7 @@ export class UserErrors {
       code: 'USER_EMAIL_INVALID_FORMAT',
       status: HttpStatus.BAD_REQUEST,
       message: `Email '${email}' has an invalid format.`,
-      metadata: email
+      metadata: email,
     };
   }
 
@@ -83,7 +83,7 @@ export class UserErrors {
       code: 'USER_ALREADY_EXISTS',
       status: HttpStatus.BAD_REQUEST,
       message: `User with username '${username}' or email '${email}' already exists. Please choose different credentials.`,
-      metadata: JSON.stringify({ username, email })
+      metadata: JSON.stringify({ username, email }),
     };
   }
 
@@ -111,4 +111,3 @@ export class UserErrors {
     };
   }
 }
-

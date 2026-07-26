@@ -6,7 +6,10 @@ import { Logger } from '@shared/common/logger/logger.service';
 
 @Injectable()
 export class OrmDatabaseConfig implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService, private loggerService: Logger) {}
+  constructor(
+    private configService: ConfigService,
+    private loggerService: Logger
+  ) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {

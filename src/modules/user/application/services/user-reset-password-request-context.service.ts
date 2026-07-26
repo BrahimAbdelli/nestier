@@ -11,7 +11,7 @@ export class UserResetPasswordRequestContextService {
 
   constructor(
     @Inject(REQUEST) private readonly request: IGetUserAuthInfoRequest,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     this.authConfig = configService.get<ConfigAuthModel>('auth');
   }

@@ -13,8 +13,8 @@ export class CategoryTestService implements CategoryTestInterface {
 
   constructor(
     private readonly categoryRepository: Repository<CategoryEntity>,
-    private readonly logger: Logger,
-  ) { }
+    private readonly logger: Logger
+  ) {}
 
   async clearCategories(): Promise<void> {
     try {
@@ -77,4 +77,3 @@ export class CategoryTestService implements CategoryTestInterface {
     }
   }
 }
-

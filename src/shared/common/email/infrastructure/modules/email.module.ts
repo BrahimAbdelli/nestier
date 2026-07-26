@@ -4,10 +4,7 @@ import { LoggerModule } from '@shared/common/logger/logger.module';
 import { EmailService } from '../services/email.service';
 
 @Module({
-  imports: [
-    ConfigModule,
-    LoggerModule,
-  ],
+  imports: [ConfigModule, LoggerModule],
   providers: [
     EmailService,
     {
@@ -15,9 +12,6 @@ import { EmailService } from '../services/email.service';
       useClass: EmailService,
     },
   ],
-  exports: [
-    EmailService,
-    'EmailInterface',
-  ],
+  exports: [EmailService, 'EmailInterface'],
 })
 export class EmailModule {}

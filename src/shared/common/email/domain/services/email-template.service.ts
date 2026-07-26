@@ -9,7 +9,7 @@ import { PasswordResetTemplateData } from '../value-objects/password-reset-templ
 
 @Injectable()
 export class EmailTemplateService {
-  constructor(private readonly logger: Logger) { }
+  constructor(private readonly logger: Logger) {}
 
   public generatePasswordResetTemplate(data: PasswordResetTemplateData): EmailTemplate {
     const template: TemplateDelegate = this.loadTemplate('reset');

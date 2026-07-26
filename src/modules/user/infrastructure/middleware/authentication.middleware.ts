@@ -10,7 +10,10 @@ import { Logger } from '@shared/common/logger/logger.service';
 export class AuthMiddleware implements NestMiddleware {
   private authConfig: ConfigAuthModel;
 
-  constructor(private readonly configService: ConfigService, private logger: Logger) {
+  constructor(
+    private readonly configService: ConfigService,
+    private logger: Logger
+  ) {
     this.authConfig = configService.get<ConfigAuthModel>('auth');
   }
 

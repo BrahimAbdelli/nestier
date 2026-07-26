@@ -11,19 +11,38 @@ import { ApplicationException } from '../error-handling/domain/exceptions/applic
  */
 export async function isFieldUnique<T>(repository: Repository<T>, field: object, id?: string): Promise<void> {
   const fieldKey: string = Object.keys(field)[0];
-  const fieldValue = Object.values(field)[0];
+  const fieldValue: unknown = Object.values(field)[0];
+  const comparableValue: string = toComparableString(fieldValue);
 
-  const condition: FindOptionsWhere<T> = { [fieldKey]: new RegExp(`^${fieldValue}$`, 'i') } as FindOptionsWhere<T>;
+  const condition: FindOptionsWhere<T> = { [fieldKey]: new RegExp(`^${comparableValue}$`, 'i') } as FindOptionsWhere<T>;
   const entity: ObjectLiteral = await repository.findOne({ where: condition });
-
-  let isUnique: boolean = false;
-
-  if (id) {
-    if (!entity) isUnique = true;
-    else isUnique = entity._id.toHexString() === id && entity[fieldKey].toLowerCase() === fieldValue.toLowerCase();
-  } else isUnique = !entity;
+  const isUnique: boolean = resolveFieldUniqueness(entity, fieldKey, comparableValue, id);
 
   if (!isUnique) {
-    throw new ApplicationException(BaseErrors.FIELD_NOT_UNIQUE(fieldKey, fieldValue));
+    throw new ApplicationException(BaseErrors.FIELD_NOT_UNIQUE(fieldKey, fieldValue as string));
   }
+}
+
+function resolveFieldUniqueness(entity: ObjectLiteral, fieldKey: string, expectedValue: string, id?: string): boolean {
+  if (!id) {
+    return !entity;
+  }
+  if (!entity) {
+    return true;
+  }
+  const entityValue: string = toComparableString(entity[fieldKey]).toLowerCase();
+  return entity._id.toHexString() === id && entityValue === expectedValue.toLowerCase();
+}
+
+function toComparableString(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value);
+  }
+  if (value === null || value === undefined) {
+    return '';
+  }
+  return JSON.stringify(value);
 }

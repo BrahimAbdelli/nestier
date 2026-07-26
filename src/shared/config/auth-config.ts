@@ -1,4 +1,4 @@
-import { ConfigAuthModel } from "./models/config-auth.model";
+import { ConfigAuthModel } from './models/config-auth.model';
 
 export function authConfig(): ConfigAuthModel {
   return {

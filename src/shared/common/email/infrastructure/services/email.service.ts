@@ -14,21 +14,21 @@ export class EmailService implements EmailSenderInterface {
   private readonly mailjet: Mailjet.Client;
   private readonly mailjetConfig: ConfigMailjetModel;
 
-  constructor(private readonly configService: ConfigService, private logger: Logger) {
+  constructor(
+    private readonly configService: ConfigService,
+    private logger: Logger
+  ) {
     this.mailjetConfig = configService.get<ConfigMailjetModel>('mailjet');
     this.mailjet = new Mailjet.Client({
       apiKey: this.mailjetConfig.apiKey,
-      apiSecret: this.mailjetConfig.secretKey
+      apiSecret: this.mailjetConfig.secretKey,
     });
   }
 
   public async sendEmail(emailData: GenericEmailData): Promise<void> {
     try {
       const message: Record<string, unknown> = MailjetMessageBuilder.create()
-        .withFrom(
-          this.mailjetConfig.mail,
-          this.mailjetConfig.companyName
-        )
+        .withFrom(this.mailjetConfig.mail, this.mailjetConfig.companyName)
         .withTo(emailData.to, emailData.toName)
         .withSubject(emailData.subject)
         .withContent(emailData.html, emailData.text)

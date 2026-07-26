@@ -20,7 +20,7 @@ export class BaseService<D extends Base> implements BaseServiceInterface<D> {
   constructor(
     @Inject(BaseRepository) private readonly baseRepository: BaseRepository<D>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
-    protected readonly logger: Logger,
+    protected readonly logger: Logger
   ) {}
 
   public findAll(): Promise<D[]> {
@@ -109,7 +109,7 @@ export class BaseService<D extends Base> implements BaseServiceInterface<D> {
     }
   }
 
-  public async paginate(take: number, skip: number): Promise<ResponsePaginate<D>> {
+  public paginate(take: number, skip: number): Promise<ResponsePaginate<D>> {
     const queryTake: number = take || PaginationConstants.DEFAULT_TAKE;
     const querySkip: number = skip || PaginationConstants.DEFAULT_SKIP;
     const criteria: FindAndCountCriteria = {

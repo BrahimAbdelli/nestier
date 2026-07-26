@@ -20,7 +20,7 @@ export class ProductService extends BaseService<Product> {
     private readonly findExpensiveProductsUseCase: FindExpensiveProductsUseCase,
     private readonly findProductsByNameUseCase: FindProductsByNameUseCase,
     private readonly configService: ConfigService,
-    logger: Logger,
+    logger: Logger
   ) {
     super(baseRepository, request, logger);
     this.productConfig = this.configService.get<ConfigProductModel>('product');
@@ -43,12 +43,12 @@ export class ProductService extends BaseService<Product> {
     domain.applyBusinessRules(this.productConfig.restrictedWords);
 
     // Use the inherited update method from BaseService
-    return await super.update(domain);
+    return super.update(domain);
   }
 
   // Product-specific business methods
-  public async findExpensiveProducts(threshold: number = 1000): Promise<Product[]> {
-    return await this.findExpensiveProductsUseCase.execute(threshold);
+  public findExpensiveProducts(threshold: number = 1000): Promise<Product[]> {
+    return this.findExpensiveProductsUseCase.execute(threshold);
   }
 
   public findProductsByName(name: string): Promise<Product[]> {

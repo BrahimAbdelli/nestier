@@ -4,10 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Logger } from './logger.service';
 
 @Module({
-  imports: [
-    HttpModule,
-    ConfigModule,
-  ],
+  imports: [HttpModule, ConfigModule],
   providers: [Logger, { provide: 'LoggerInterface', useClass: Logger }],
   exports: [Logger, 'LoggerInterface'],
 })

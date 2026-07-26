@@ -2,7 +2,10 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SendPasswordResetEmailUseCase, SendPasswordResetEmailRequest } from '../use-cases/send-password-reset-email.use-case';
+import {
+  SendPasswordResetEmailUseCase,
+  SendPasswordResetEmailRequest,
+} from '../use-cases/send-password-reset-email.use-case';
 import { ApplicationException } from '@shared/common/error-handling/domain/exceptions/application.exception';
 import { Logger } from '@shared/common/logger/logger.service';
 import { findByField } from '@shared/common/utils/find-by-field.utils';
@@ -34,7 +37,7 @@ export class UserService extends BaseService<User> {
     private readonly configService: ConfigService,
     private readonly sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase,
     private readonly userResetPasswordRequestContextService: UserResetPasswordRequestContextService,
-    logger: Logger,
+    logger: Logger
   ) {
     super(userRepository, request, logger);
     this.authConfig = configService.get<ConfigAuthModel>('auth');
@@ -120,7 +123,6 @@ export class UserService extends BaseService<User> {
     }
   }
 
-
   public async archive(id: ObjectId): Promise<void> {
     const user: User = await this.userRepository.findOneById(id.toHexString());
     if (!user) {
@@ -205,7 +207,9 @@ export class UserService extends BaseService<User> {
   }
 
   private async sendPasswordResetEmail(user: User): Promise<void> {
-    const context: UserResetPasswordRequestContext = this.userResetPasswordRequestContextService.getRequestContext(user.resetPasswordToken);
+    const context: UserResetPasswordRequestContext = this.userResetPasswordRequestContextService.getRequestContext(
+      user.resetPasswordToken
+    );
 
     const request: SendPasswordResetEmailRequest = SendPasswordResetEmailRequest.create()
       .withUser(user)

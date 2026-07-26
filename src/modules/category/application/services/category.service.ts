@@ -11,7 +11,7 @@ export class CategoryService extends BaseService<Category> {
   constructor(
     @Inject(BaseRepository) baseRepository: BaseRepository<Category>,
     @Inject(REQUEST) public readonly request: IGetUserAuthInfoRequest,
-    logger: Logger,
+    logger: Logger
   ) {
     super(baseRepository, request, logger);
   }
@@ -33,6 +33,6 @@ export class CategoryService extends BaseService<Category> {
     domain.applyBusinessRules();
 
     // Use the inherited update method from BaseService
-    return await super.update(domain);
+    return super.update(domain);
   }
 }

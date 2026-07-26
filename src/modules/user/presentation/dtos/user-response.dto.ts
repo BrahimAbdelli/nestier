@@ -26,4 +26,3 @@ export class UserResponseDto {
   @AutoMap()
   public resetPasswordToken?: string;
 }
-

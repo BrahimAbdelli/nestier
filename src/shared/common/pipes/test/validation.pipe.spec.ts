@@ -83,7 +83,9 @@ describe('ValidationPipe', () => {
       expect(await pipe.transform(42, { type: 'param', metatype: Number, data: '' })).toBe(42);
       expect(await pipe.transform(true, { type: 'param', metatype: Boolean, data: '' })).toBe(true);
       expect(await pipe.transform([1, 2], { type: 'body', metatype: Array, data: '' })).toEqual([1, 2]);
-      expect(await pipe.transform({ key: 'val' }, { type: 'body', metatype: Object, data: '' })).toEqual({ key: 'val' });
+      expect(await pipe.transform({ key: 'val' }, { type: 'body', metatype: Object, data: '' })).toEqual({
+        key: 'val',
+      });
     });
 
     it('should validate nested objects', async () => {
@@ -110,5 +112,3 @@ describe('ValidationPipe', () => {
     });
   });
 });
-
-

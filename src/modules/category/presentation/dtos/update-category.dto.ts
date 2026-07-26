@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseDto } from '../../../base/presentation/dtos/dtos/base.dto';
 
-export class UpdateCategoryDto extends BaseDto{
+export class UpdateCategoryDto extends BaseDto {
   @ApiProperty({ description: 'Category name', required: false })
   @IsOptional()
   @IsString()

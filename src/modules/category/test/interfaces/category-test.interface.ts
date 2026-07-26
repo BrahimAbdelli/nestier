@@ -14,4 +14,3 @@ export interface CategoryTestInterface {
   // Cleanup operations
   cleanupAfterTest(): Promise<void>;
 }
-

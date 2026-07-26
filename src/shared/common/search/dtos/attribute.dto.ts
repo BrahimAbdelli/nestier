@@ -1,7 +1,7 @@
-import { AutoMap } from "@automapper/classes";
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional, IsEnum } from "class-validator";
-import { ComparatorEnum } from "../enums/comparator.enum";
+import { AutoMap } from '@automapper/classes';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { ComparatorEnum } from '../enums/comparator.enum';
 
 export class AttributeDto {
   @ApiProperty()

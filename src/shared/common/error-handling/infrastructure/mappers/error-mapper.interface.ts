@@ -11,6 +11,3 @@ export interface ErrorMapper {
    */
   mapToHttpException(error: Error): HttpException;
 }
-
-
-

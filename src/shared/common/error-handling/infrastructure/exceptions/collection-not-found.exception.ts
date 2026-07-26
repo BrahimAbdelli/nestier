@@ -1,4 +1,4 @@
-import { InfrastructureException } from "./infrastructure.exception";
+import { InfrastructureException } from './infrastructure.exception';
 
 /**
  * Exception thrown when a collection is not found (not already created)

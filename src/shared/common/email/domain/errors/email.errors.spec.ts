@@ -23,7 +23,8 @@ describe('EmailErrors', () => {
     });
 
     it('should handle template names with special characters', () => {
-      const errorEmailTemplateLoadError: ApplicationError = EmailErrors.EMAIL_TEMPLATE_LOAD_ERROR('user-confirmation-2024');
+      const errorEmailTemplateLoadError: ApplicationError =
+        EmailErrors.EMAIL_TEMPLATE_LOAD_ERROR('user-confirmation-2024');
 
       expect(errorEmailTemplateLoadError.message).toBe("Failed to load email template 'user-confirmation-2024'");
     });

@@ -43,28 +43,40 @@ describe('ErrorMapperService', () => {
       });
 
       it('422 BUSINESS_RULE_VIOLATION - should be mapped for business rule violation', () => {
-        const errorBusinessRule: BusinessRuleViolationException = new BusinessRuleViolationException('MaxPrice', 'Price exceeds maximum allowed');
+        const errorBusinessRule: BusinessRuleViolationException = new BusinessRuleViolationException(
+          'MaxPrice',
+          'Price exceeds maximum allowed'
+        );
         const httpException: HttpException = service.mapToHttpException(errorBusinessRule);
 
         expect(httpException.getStatus()).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
       });
 
       it('400 DOMAIN_VALIDATION_ERROR - should be mapped for validation errors', () => {
-        const errorDomainValidation: DomainValidationException = new DomainValidationException('Validation failed', { field: ['error'] });
+        const errorDomainValidation: DomainValidationException = new DomainValidationException('Validation failed', {
+          field: ['error'],
+        });
         const httpException: HttpException = service.mapToHttpException(errorDomainValidation);
 
         expect(httpException.getStatus()).toBe(HttpStatus.BAD_REQUEST);
       });
 
       it('422 UNPROCESSABLE_ENTITY - should be mapped for unknown domain errors', () => {
-        const errorUnknownDomain: BusinessRuleViolationException = new BusinessRuleViolationException('UnknownRule', 'Unknown error');
+        const errorUnknownDomain: BusinessRuleViolationException = new BusinessRuleViolationException(
+          'UnknownRule',
+          'Unknown error'
+        );
         const httpException: HttpException = service.mapToHttpException(errorUnknownDomain);
 
         expect(httpException.getStatus()).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
       });
 
       it('should include context in domain exception response', () => {
-        const errorWithContext: BusinessRuleViolationException = new BusinessRuleViolationException('TestRule', 'Test error', { userId: '123' });
+        const errorWithContext: BusinessRuleViolationException = new BusinessRuleViolationException(
+          'TestRule',
+          'Test error',
+          { userId: '123' }
+        );
         const httpException: HttpException = service.mapToHttpException(errorWithContext);
 
         expect(httpException.getResponse()).toMatchObject({
@@ -242,7 +254,9 @@ describe('ErrorMapperService', () => {
       });
 
       it('500 INTERNAL_SERVER_ERROR - should be mapped for external service errors', () => {
-        const errorExternalService: DatabaseException = new DatabaseException('query', 'External service error', { code: 'EXTERNAL_SERVICE_ERROR' });
+        const errorExternalService: DatabaseException = new DatabaseException('query', 'External service error', {
+          code: 'EXTERNAL_SERVICE_ERROR',
+        });
         const httpException: HttpException = service.mapToHttpException(errorExternalService);
 
         expect(httpException.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -256,7 +270,11 @@ describe('ErrorMapperService', () => {
       });
 
       it('should include context in infrastructure exception response', () => {
-        const errorInfrastructureWithContext: DatabaseException = new DatabaseException('update', 'Error with context', { service: 'database' });
+        const errorInfrastructureWithContext: DatabaseException = new DatabaseException(
+          'update',
+          'Error with context',
+          { service: 'database' }
+        );
         const httpException: HttpException = service.mapToHttpException(errorInfrastructureWithContext);
 
         expect(httpException.getResponse()).toMatchObject({

@@ -14,7 +14,7 @@ export class ProductTestService implements ProductTestInterface {
   constructor(
     private readonly productRepository: Repository<ProductEntity>,
     private readonly logger: Logger
-  ) { }
+  ) {}
 
   async clearProducts(): Promise<void> {
     try {

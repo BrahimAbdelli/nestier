@@ -12,8 +12,7 @@ import { TestAppModule } from '@shared/common/test/test-app.module';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import request from 'supertest';
-import { DataSource, Repository } from 'typeorm';
-import { DatabaseTestService } from '../../base/test/services/database-test.service';
+import { Repository } from 'typeorm';
 import { UserEntity } from '../../user/infrastructure/entities/user.entity';
 import { ProductEntity } from '../infrastructure/entities/product.entity';
 import { CreateProductDto, ProductDto, UpdateProductDto } from '../presentation/dtos';
@@ -25,7 +24,6 @@ type SupertestResponse = import('supertest').Response;
 
 describe('Product E2E', () => {
   let productTestService: ProductTestService;
-  let databaseTestService: DatabaseTestService;
   let productRepository: Repository<ProductEntity>;
   let userRepository: Repository<UserEntity>;
   let app: INestApplication;
@@ -50,14 +48,12 @@ describe('Product E2E', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    const dataSource: DataSource = moduleFixture.get<DataSource>(DataSource);
     logger = moduleFixture.get<Logger>(Logger);
 
     configService = moduleFixture.get<ConfigService>(ConfigService);
     productRepository = moduleFixture.get<Repository<ProductEntity>>(getRepositoryToken(ProductEntity));
     userRepository = moduleFixture.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
     productTestService = new ProductTestService(productRepository, logger);
-    databaseTestService = new DatabaseTestService(dataSource, logger);
 
     loggerErrorSpy = jest.spyOn(logger, 'error');
     loggerWarnSpy = jest.spyOn(logger, 'warn');
@@ -106,7 +102,7 @@ describe('Product E2E', () => {
       const createProductDto: CreateProductDto = mockProductFactory({
         name: 'Test Search Product',
         price: 100,
-        description: 'Product for search testing'
+        description: 'Product for search testing',
       });
 
       await postProduct(createProductDto);
@@ -119,20 +115,21 @@ describe('Product E2E', () => {
         skip: 0,
       });
 
-      const response: SupertestResponse = await searchProducts(searchCriteria)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await searchProducts(searchCriteria).expect(HttpStatus.OK);
 
       const searchResponseProducts: SearchResponseDto<ProductDto> = response.body;
       expect(searchResponseProducts.data).toBeInstanceOf(Array);
       expect(searchResponseProducts.count).toBeGreaterThan(0);
-      expect(searchResponseProducts.data.some((product: ProductDto) => product.name.toLowerCase().includes('test'))).toBe(true);
+      expect(
+        searchResponseProducts.data.some((product: ProductDto) => product.name.toLowerCase().includes('test'))
+      ).toBe(true);
     });
 
     it('200 OK - should search products by price range', async () => {
       const createProductDto: CreateProductDto = mockProductFactory({
         name: 'Price Test Product',
         price: 10,
-        description: 'Product for price search testing'
+        description: 'Product for price search testing',
       });
 
       await postProduct(createProductDto);
@@ -143,8 +140,7 @@ describe('Product E2E', () => {
         isPaginable: false,
       });
 
-      const response: SupertestResponse = await searchProducts(searchCriteria)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await searchProducts(searchCriteria).expect(HttpStatus.OK);
 
       const products: ProductDto[] = response.body.data;
       expect(products).toBeInstanceOf(Array);
@@ -155,7 +151,7 @@ describe('Product E2E', () => {
       const createProductDto: CreateProductDto = mockProductFactory({
         name: 'Test Multi Criteria Product',
         price: 10,
-        description: 'Product for multiple criteria search testing'
+        description: 'Product for multiple criteria search testing',
       });
 
       await postProduct(createProductDto);
@@ -163,24 +159,25 @@ describe('Product E2E', () => {
       const searchCriteria: QueryDto<ProductEntity> = mockProductSearchCriteriaFactory({
         attributes: [
           { key: 'name', value: 'Test', comparator: ComparatorEnum.LIKE },
-          { key: 'price', value: 10, comparator: ComparatorEnum.EQUALS }
+          { key: 'price', value: 10, comparator: ComparatorEnum.EQUALS },
         ],
         type: ComparisonTypeEnum.AND,
         isPaginable: true,
         take: 5,
         skip: 0,
-        orders: { name: OrderEnum.ASC }
+        orders: { name: OrderEnum.ASC },
       });
 
-      const response: SupertestResponse = await searchProducts(searchCriteria)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await searchProducts(searchCriteria).expect(HttpStatus.OK);
 
       const searchResponseProducts: SearchResponseDto<ProductDto> = response.body;
       expect(searchResponseProducts.data).toBeInstanceOf(Array);
       expect(searchResponseProducts.data.length).toBeLessThanOrEqual(5);
-      expect(searchResponseProducts.data.every((product: ProductDto) =>
-        product.name.toLowerCase().includes('test') && product.price === 10
-      )).toBe(true);
+      expect(
+        searchResponseProducts.data.every(
+          (product: ProductDto) => product.name.toLowerCase().includes('test') && product.price === 10
+        )
+      ).toBe(true);
     });
   });
 
@@ -231,16 +228,14 @@ describe('Product E2E', () => {
         .send(invalidProduct)
         .expect(HttpStatus.BAD_REQUEST);
 
-      expect(response.body.message).toEqual(expect.arrayContaining([
-        expect.stringContaining('name')
-      ]));
+      expect(response.body.message).toEqual(expect.arrayContaining([expect.stringContaining('name')]));
     });
 
     it('400 BAD REQUEST - should reject product with negative price', async () => {
       const invalidProduct: CreateProductDto = {
         name: 'Test Product',
         price: -100,
-        description: 'Test description'
+        description: 'Test description',
       };
 
       const response: SupertestResponse = await request(app.getHttpServer())
@@ -257,7 +252,7 @@ describe('Product E2E', () => {
       const invalidProduct: CreateProductDto = {
         name: 'Test Product',
         price: 100001,
-        description: 'Test description'
+        description: 'Test description',
       };
 
       const response: SupertestResponse = await request(app.getHttpServer())
@@ -266,15 +261,19 @@ describe('Product E2E', () => {
         .send(invalidProduct)
         .expect(HttpStatus.BAD_REQUEST);
 
-      expect(response.body.code).toBe(ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).code);
-      expect(response.body.message).toBe(ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).message);
+      expect(response.body.code).toBe(
+        ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).code
+      );
+      expect(response.body.message).toBe(
+        ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).message
+      );
     });
 
     it('400 BAD REQUEST - should reject product with restricted word in name', async () => {
       const invalidProduct: CreateProductDto = {
         name: 'Replica Watch',
         price: 100,
-        description: 'Test description'
+        description: 'Test description',
       };
 
       const response: SupertestResponse = await request(app.getHttpServer())
@@ -283,15 +282,19 @@ describe('Product E2E', () => {
         .send(invalidProduct)
         .expect(HttpStatus.BAD_REQUEST);
 
-      expect(response.body.code).toBe(ProductErrors.PRODUCT_NAME_CONTAINS_RESTRICTED_WORD(invalidProduct.name, 'replica').code);
-      expect(response.body.message).toBe(ProductErrors.PRODUCT_NAME_CONTAINS_RESTRICTED_WORD(invalidProduct.name, 'replica').message);
+      expect(response.body.code).toBe(
+        ProductErrors.PRODUCT_NAME_CONTAINS_RESTRICTED_WORD(invalidProduct.name, 'replica').code
+      );
+      expect(response.body.message).toBe(
+        ProductErrors.PRODUCT_NAME_CONTAINS_RESTRICTED_WORD(invalidProduct.name, 'replica').message
+      );
     });
 
     it('400 BAD REQUEST - should reject high-value product requiring approval', async () => {
       const invalidProduct: CreateProductDto = {
         name: 'Expensive Product',
         price: 15000,
-        description: 'High-value product'
+        description: 'High-value product',
       };
 
       const response: SupertestResponse = await request(app.getHttpServer())
@@ -300,15 +303,19 @@ describe('Product E2E', () => {
         .send(invalidProduct)
         .expect(HttpStatus.BAD_REQUEST);
 
-      expect(response.body.code).toBe(ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).code);
-      expect(response.body.message).toBe(ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).message);
+      expect(response.body.code).toBe(
+        ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).code
+      );
+      expect(response.body.message).toBe(
+        ProductErrors.PRODUCT_HIGH_VALUE_REQUIRES_APPROVAL(invalidProduct.name, invalidProduct.price).message
+      );
     });
 
     it('400 BAD REQUEST - should reject product with price too low', async () => {
       const invalidProduct: CreateProductDto = {
         name: 'Cheap Product',
         price: 0.5,
-        description: 'Very cheap product'
+        description: 'Very cheap product',
       };
 
       const response: SupertestResponse = await request(app.getHttpServer())
@@ -330,8 +337,7 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      const response: SupertestResponse = await getProductById(productId)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await getProductById(productId).expect(HttpStatus.OK);
 
       // Response is a DTO (mapped), not a raw domain/persistence object
       expect(response.body._id).toBe(productId);
@@ -348,8 +354,7 @@ describe('Product E2E', () => {
     });
 
     it('404 NOT FOUND - should return 404 if product not found', async () => {
-      const response: SupertestResponse = await getProductById(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await getProductById(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
         expect.objectContaining({
@@ -357,7 +362,7 @@ describe('Product E2E', () => {
           code: 'NOT_FOUND',
           timestamp: expect.any(String),
           path: `/products/find/${nonExistentId}`,
-          method: 'GET'
+          method: 'GET',
         })
       );
 
@@ -382,8 +387,7 @@ describe('Product E2E', () => {
         description: 'Updated Product description',
       };
 
-      const response: SupertestResponse = await updateProduct(productId, updateProductDto)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await updateProduct(productId, updateProductDto).expect(HttpStatus.OK);
 
       expect(response.body._id).toBe(productId);
       expect(response.body.name).toBe(updateProductDto.name);
@@ -398,8 +402,9 @@ describe('Product E2E', () => {
         description: 'Updated Product description',
       };
 
-      const response: SupertestResponse = await updateProduct(nonExistentId.toString(), updateProductDto)
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await updateProduct(nonExistentId.toString(), updateProductDto).expect(
+        HttpStatus.NOT_FOUND
+      );
 
       expect(response.body).toEqual(
         expect.objectContaining({
@@ -407,7 +412,7 @@ describe('Product E2E', () => {
           code: 'NOT_FOUND',
           timestamp: expect.any(String),
           path: `/products/${nonExistentId}`,
-          method: 'PUT'
+          method: 'PUT',
         })
       );
     });
@@ -421,13 +426,11 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      await archiveProduct(productId)
-        .expect(HttpStatus.OK);
+      await archiveProduct(productId).expect(HttpStatus.OK);
     });
 
     it('should return 404 if product not found', async () => {
-      const response: SupertestResponse = await archiveProduct(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await archiveProduct(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
         expect.objectContaining({
@@ -435,7 +438,7 @@ describe('Product E2E', () => {
           code: 'NOT_FOUND',
           timestamp: expect.any(String),
           path: `/products/archive/${nonExistentId}`,
-          method: 'PATCH'
+          method: 'PATCH',
         })
       );
     });
@@ -449,13 +452,11 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      await unarchiveProduct(productId)
-        .expect(HttpStatus.OK);
+      await unarchiveProduct(productId).expect(HttpStatus.OK);
     });
 
     it('should return 404 if product not found', async () => {
-      const response: SupertestResponse = await unarchiveProduct(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await unarchiveProduct(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
         expect.objectContaining({
@@ -463,7 +464,7 @@ describe('Product E2E', () => {
           code: 'NOT_FOUND',
           timestamp: expect.any(String),
           path: `/products/unarchive/${nonExistentId}`,
-          method: 'PATCH'
+          method: 'PATCH',
         })
       );
     });
@@ -477,15 +478,13 @@ describe('Product E2E', () => {
       const existingProduct: ProductEntity = existingProducts[0];
       const productId: string = existingProduct._id.toString();
 
-      const response: SupertestResponse = await deleteProduct(productId)
-        .expect(HttpStatus.OK);
+      const response: SupertestResponse = await deleteProduct(productId).expect(HttpStatus.OK);
 
       expect(response.body).toBeDefined();
     });
 
     it('should return 404 if product not found', async () => {
-      const response: SupertestResponse = await deleteProduct(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await deleteProduct(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual(
         expect.objectContaining({
@@ -493,7 +492,7 @@ describe('Product E2E', () => {
           code: 'NOT_FOUND',
           timestamp: expect.any(String),
           path: `/products/${nonExistentId}`,
-          method: 'DELETE'
+          method: 'DELETE',
         })
       );
     });
@@ -503,19 +502,13 @@ describe('Product E2E', () => {
     it('should reject requests without token', async () => {
       const createProductDto: CreateProductDto = mockProductFactory();
 
-      await request(app.getHttpServer())
-        .post('/products')
-        .send(createProductDto)
-        .expect(HttpStatus.UNAUTHORIZED);
+      await request(app.getHttpServer()).post('/products').send(createProductDto).expect(HttpStatus.UNAUTHORIZED);
 
-      expect(loggerWarnSpy).toHaveBeenCalledWith(
-        'Authentication failed: No token provided'
-      );
+      expect(loggerWarnSpy).toHaveBeenCalledWith('Authentication failed: No token provided');
     });
 
     it('should handle non-existent product ID', async () => {
-      const response: SupertestResponse = await getProductById(nonExistentId.toString())
-        .expect(HttpStatus.NOT_FOUND);
+      const response: SupertestResponse = await getProductById(nonExistentId.toString()).expect(HttpStatus.NOT_FOUND);
 
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body.code).toBe('NOT_FOUND');
@@ -536,7 +529,7 @@ describe('Product E2E', () => {
         roles: ['user'],
         image: '',
         about: 'Test user for e2e tests',
-        isDeleted: false
+        isDeleted: false,
       });
       await userRepository.save(testUser);
     }
@@ -584,9 +577,7 @@ describe('Product E2E', () => {
   }
 
   function getProductById(id: string) {
-    return request(app.getHttpServer())
-      .get(`/products/find/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).get(`/products/find/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function updateProduct(id: string, updateData: UpdateProductDto) {
@@ -597,21 +588,15 @@ describe('Product E2E', () => {
   }
 
   function archiveProduct(id: string) {
-    return request(app.getHttpServer())
-      .patch(`/products/archive/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).patch(`/products/archive/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function unarchiveProduct(id: string) {
-    return request(app.getHttpServer())
-      .patch(`/products/unarchive/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).patch(`/products/unarchive/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function deleteProduct(id: string) {
-    return request(app.getHttpServer())
-      .delete(`/products/${id}`)
-      .set('Authorization', `Bearer ${testToken}`);
+    return request(app.getHttpServer()).delete(`/products/${id}`).set('Authorization', `Bearer ${testToken}`);
   }
 
   function searchProducts(searchCriteria: QueryDto<ProductDto>) {

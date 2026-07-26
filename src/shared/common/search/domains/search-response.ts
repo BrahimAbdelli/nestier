@@ -1,4 +1,4 @@
-import { Base } from "../../../../modules/base/domain/value-objects/base";
+import { Base } from '../../../../modules/base/domain/value-objects/base';
 
 export class SearchResponse<D extends Base> {
   count: number;
