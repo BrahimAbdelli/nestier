@@ -4,7 +4,7 @@ import { ResponsePaginate } from '@shared/common/types/response-paginate.type';
 import { Base } from '../../domain/value-objects/base';
 import { BaseDto } from '../dtos/dtos/base.dto';
 
-export interface BaseControllerInterface<D extends Base, B extends BaseDto, CreateDto, UpdateDto, FindAndSearchDto> {
+export interface BaseControllerInterface<_D extends Base, B extends BaseDto, CreateDto, UpdateDto, FindAndSearchDto> {
   findAll(): Promise<FindAndSearchDto[]>;
   paginate(take: number, skip: number): Promise<ResponsePaginate<B>>;
   create(createDto: CreateDto): Promise<void>;

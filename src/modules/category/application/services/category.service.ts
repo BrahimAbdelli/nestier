@@ -27,7 +27,7 @@ export class CategoryService extends BaseService<Category> {
   }
 
   // Enhanced update method with business logic
-  public async update(domain: Category): Promise<Category> {
+  public update(domain: Category): Promise<Category> {
     // Apply domain validation and business rules
     domain.validate();
     domain.applyBusinessRules();

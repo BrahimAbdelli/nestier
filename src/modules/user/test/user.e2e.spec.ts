@@ -827,7 +827,7 @@ describe('User E2E', () => {
     await userTestService.cleanupAfterTest();
   }
 
-  async function createTestUserEntity(overrides: Partial<CreateUserDto> = {}): Promise<UserEntity> {
+  function createTestUserEntity(overrides: Partial<CreateUserDto> = {}): Promise<UserEntity> {
     const mockUser: CreateUserDto = mockUserFactory({
       username: `testuser${Date.now()}`,
       email: `testuser${Date.now()}@example.com`,

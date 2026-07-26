@@ -37,7 +37,7 @@ export class ProductService extends BaseService<Product> {
   }
 
   // Enhanced update method with business logic
-  public async update(domain: Product): Promise<Product> {
+  public update(domain: Product): Promise<Product> {
     // Apply domain validation and business rules
     domain.validate();
     domain.applyBusinessRules(this.productConfig.restrictedWords);
