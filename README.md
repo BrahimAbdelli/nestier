@@ -10,7 +10,7 @@
     <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg" alt="Node"></a>
     <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-6.x-blue.svg" alt="TypeScript"></a>
     <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/nestjs-11.1.28-red.svg" alt="NestJS"></a>
-    <img src="https://img.shields.io/badge/version-2.0.3-orange.svg" alt="Version">
+    <img src="https://img.shields.io/badge/version-2.0.4-orange.svg" alt="Version">
   </p>
 </div>
 

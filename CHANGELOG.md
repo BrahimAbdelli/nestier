@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.4] - 2026-09-26
+
+### Changed (dependencies)
+- Refreshed dependencies within current majors (NestJS 11.2.6, eslint 10.11.0, axios 1.20.0, jest 30.5.2)
+- Kept major bumps on hold (NestJS 12, TypeScript 7, TypeORM 1, AutoMapper 9, nodemailer 10)
+- Pinned `mongodb` to 7.5.0: driver 7.6 requires MongoDB server 4.4+ and breaks the Jest handshake
+
+### Verified
+- Unit tests: 127/127
+- E2E tests: 85/85
+- `npm run build` succeeds
+
 ## [2.0.3] - 2026-07-26
 
 ### Changed (hexagonal Phase 1 — base kernel)
